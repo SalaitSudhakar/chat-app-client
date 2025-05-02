@@ -6,12 +6,14 @@ import Signup from "./Pages/Signup";
 import Login from "./Pages/Login";
 import Profile from "./Pages/Profile";
 import Settings from "./Pages/Settings";
-import { userAuthStore } from "./Store/useAuthStore";
+import { useAuthStore } from "./Store/useAuthStore";
 import FadeLoader from "react-spinners/FadeLoader";
 import ProtectedRoute from "./Components/ProtectedRoute";
+import AuthGuard from "./Components/AuthGuard";
+import { Toaster } from 'react-hot-toast';
 
 const App = () => {
-  const { userData, checkAuth, isCheckingAuth } = userAuthStore();
+  const { userData, checkAuth, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
     checkAuth();
@@ -28,8 +30,9 @@ const App = () => {
   }
 
   return (
-    <div>
+    <div className="relative min-h-screen">
       <BrowserRouter>
+        <Toaster position="top-right" reverseOrder={false} />
         <Navbar />
 
         <Routes>
@@ -42,8 +45,10 @@ const App = () => {
           <Route path="/settings" element={<Settings />} />
 
           {/* Authentication pages */}
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
+          <Route element={<AuthGuard />}>
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/login" element={<Login />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </div>

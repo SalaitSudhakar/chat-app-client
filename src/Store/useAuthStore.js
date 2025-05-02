@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import { api } from "./../Config/axiosConfig";
+import { api } from "../Config/axiosConfig";
+import toast from "react-hot-toast";
 
-export const userAuthStore = create((set) => ({
+export const useAuthStore = create((set) => ({
   userData: null, // To check user loggin state
   isSigningUp: false, // To create loading animation during signUp
   isLoggingIn: false, // To create loading animation during login
@@ -18,6 +19,20 @@ export const userAuthStore = create((set) => ({
       set({ userData: null });
     } finally {
       set({ isCheckingAuth: false });
+    }
+  },
+
+  signup: async (data) => {
+    set({ isSigningUp: true });
+    try {
+      const response = await api.post("/auth/signup", data);
+      toast.sucess("Account Created Successfully");
+
+      set({ userData: response.data });
+    } catch (error) {
+      toast.error(error.response.data.message);
+    } finally {
+      set({ isSigningUp: false });
     }
   },
 }));
