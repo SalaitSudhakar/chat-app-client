@@ -10,6 +10,7 @@ export const useAuthStore = create((set) => ({
 
   isCheckingAuth: true, // To track the below checkAuth state api call trigger
 
+  /* Check user authenticated */
   checkAuth: async () => {
     try {
       const response = await api.get("/auth/check-authenticated");
@@ -22,20 +23,35 @@ export const useAuthStore = create((set) => ({
     }
   },
 
+  /* Sign up API call */
   signup: async (data) => {
+    // Set the singingup state to true
     set({ isSigningUp: true });
     try {
-      const response = await api.post("/auth/signup", data);
-      toast.success("Account Created Successfully");
+      const response = await api.post("/auth/signup", data); //API call
+      toast.success("Account Created Successfully"); 
 
-      set({ userData: response.data });
+      set({ userData: response.data }); // Set user Data
 
       return true;
     } catch (error) {
-      toast.error(error?.response?.data?.message);
+      toast.error(error?.response?.data?.message || "Something Went Wrong");
       return false;
     } finally {
       set({ isSigningUp: false });
     }
   },
+
+  /* Logout API call */
+  logout: async () => {
+    try {
+      const response = await api.post("/auth/logout");
+      set({userData: null})
+      toast.success(response?.data?.message)
+
+      window.location = '/login'
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Something went wrong")
+    }
+  }
 }));

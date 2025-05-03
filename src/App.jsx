@@ -1,11 +1,11 @@
 import React, { useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Navbar from "./Components/Navbar";
-import Home from "./Pages/Home";
-import Signup from "./Pages/Signup";
-import Login from "./Pages/Login";
-import Profile from "./Pages/Profile";
-import Settings from "./Pages/Settings";
+import HomePage from "./Pages/HomePage";
+import SignupPage from "./Pages/SignupPage";
+import LoginPage from "./Pages/LoginPage";
+import ProfilePage from "./Pages/ProfilePage";
+import SettingsPage from "./Pages/SettingsPage";
 import { useAuthStore } from "./Store/useAuthStore";
 import FadeLoader from "react-spinners/FadeLoader";
 import ProtectedRoute from "./Components/ProtectedRoute";
@@ -38,16 +38,16 @@ const App = () => {
         <Routes>
           {/* Protected Pages */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/profile" element={<Profile />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
 
-          <Route path="/settings" element={<Settings />} />
+          <Route path="/settings" element={<SettingsPage />} />
 
           {/* Authentication pages */}
           <Route element={<AuthGuard />}>
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/login" element={<LoginPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

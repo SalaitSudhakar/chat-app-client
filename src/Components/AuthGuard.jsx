@@ -3,7 +3,7 @@ import { useAuthStore } from "../Store/useAuthStore.js";
 import { Navigate, Outlet } from "react-router-dom";
 
 const AuthGuard = () => {
-  const { userData } = useAuthStore;
+  const { userData } = useAuthStore();
 
   if (userData) return <Navigate to="/" />;
 
