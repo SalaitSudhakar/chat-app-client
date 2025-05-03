@@ -29,9 +29,12 @@ export const useAuthStore = create((set) => ({
     set({ isSigningUp: true });
     try {
       const response = await api.post("/auth/signup", data); //API call
-      toast.success("Account Created Successfully"); 
 
-      set({ userData: response.data }); // Set user Data
+      const data = response.data;
+
+      toast.success(data.message || "Account Created Successfully");
+
+      set({ userData: data.userData }); // Set user Data
 
       return true;
     } catch (error) {
@@ -42,16 +45,39 @@ export const useAuthStore = create((set) => ({
     }
   },
 
+  /* Login */
+  login: async (data) => {
+    set({ isLoggingIn: true });
+
+    try {
+      const response = api.post("/auth/login", data);
+
+      const data = response.data;
+
+      set({ userData: data.userData });
+      toast.success();
+
+      return true;
+    } catch (error) {
+      toast.error(
+        error.response.data.error || "Something Went Wrong. Try Again!"
+      );
+      return false;
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
+
   /* Logout API call */
   logout: async () => {
     try {
       const response = await api.post("/auth/logout");
-      set({userData: null})
-      toast.success(response?.data?.message)
+      set({ userData: null });
+      toast.success(response?.data?.message || "Logout Successfully");
 
-      window.location = '/login'
+      window.location = "/login";
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something went wrong")
+      toast.error(error?.response?.data?.message || "Something went wrong");
     }
-  }
+  },
 }));

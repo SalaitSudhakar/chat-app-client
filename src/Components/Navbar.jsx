@@ -19,7 +19,7 @@ const Navbar = () => {
       icon: (
         <img
           src={
-            userData?.userData?.profilePic ||
+            userData?.profilePic ||
             "data:image/jpeg;base64,...(your_base64_placeholder)"
           }
           alt="Profile Picture"

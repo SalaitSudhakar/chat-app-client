@@ -17,7 +17,7 @@ const App = () => {
 
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+  }, [checkAuth, userData]);
 
   console.log({ userData });
 
