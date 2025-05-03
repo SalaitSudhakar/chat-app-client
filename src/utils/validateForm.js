@@ -1,14 +1,16 @@
 import toast from 'react-hot-toast';
 
-export const validateForm = (formData) => {
+export const validateForm = (page, formData) => {
     // Check if all required fields are provided
-    if (!formData.fullname.trim()) {
-      return toast.error("Full name is required");
-    }
-
-    // Validate fullname: Only letters and spaces allowed
-    if (!/^[A-Za-z0-9\s]+$/.test(formData.fullname.trim())) {
-      return toast.error("Full name can only contain letters and spaces");
+    if (page === 'register') {
+      if (!formData.fullname.trim()) {
+        return toast.error("Full name is required");
+      }
+  
+      // Validate fullname: Only letters and spaces allowed
+      if (!/^[A-Za-z0-9\s]+$/.test(formData.fullname.trim())) {
+        return toast.error("Full name can only contain letters and spaces");
+      }
     }
 
     // Validate email format

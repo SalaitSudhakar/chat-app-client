@@ -42,7 +42,7 @@ const SignUpPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const isValid = validateForm(formData);
+    const isValid = validateForm("register", formData);
 
     if (isValid === true) {
       const isSuccess = await signup(formData);
@@ -55,7 +55,7 @@ const SignUpPage = () => {
   };
 
   return (
-    <Section className="min-h-screen grid lg:grid-cols-2">
+    <section className="min-h-screen grid lg:grid-cols-2">
       {/* left side */}
       <div className="flex flex-col justify-center items-center p-5 sm:p-12">
         <div className="w-full max-w-md space-y-8">
@@ -211,7 +211,7 @@ const SignUpPage = () => {
           ones.
         </p>
       </div>
-    </Section>
+    </section>
   );
 };
 export default SignUpPage;

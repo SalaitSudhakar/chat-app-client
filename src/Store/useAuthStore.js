@@ -30,15 +30,15 @@ export const useAuthStore = create((set) => ({
     try {
       const response = await api.post("/auth/signup", data); //API call
 
-      const data = response.data;
+      const { userData, message} = response.data;
 
-      toast.success(data.message || "Account Created Successfully");
+      toast.success(message || "Account Created Successfully");
 
-      set({ userData: data.userData }); // Set user Data
+      set({ userData: userData }); // Set user Data
 
       return true;
     } catch (error) {
-      toast.error(error?.response?.data?.message || "Something Went Wrong");
+      toast.error(error?.response?.data?.message || error.message || "Something Went Wrong");
       return false;
     } finally {
       set({ isSigningUp: false });
@@ -49,24 +49,29 @@ export const useAuthStore = create((set) => ({
   login: async (data) => {
     set({ isLoggingIn: true });
 
+    console.log("Data from API call in Store: ", data)
     try {
-      const response = api.post("/auth/login", data);
+      const response = await api.post("/auth/login", data);
 
-      const data = response.data;
+      if (response && response.data) {
+        const { userData, message } = response.data;
+        set({ userData: userData || null });
+        toast.success(message || "Login Successful");
+        return true;
+      } else {
+        throw new Error("Invalid response from server");
+      }
 
-      set({ userData: data.userData });
-      toast.success();
-
-      return true;
     } catch (error) {
       toast.error(
-        error.response.data.error || "Something Went Wrong. Try Again!"
+        error?.response?.data?.error || error.message || "Something Went Wrong. Try Again!"
       );
       return false;
     } finally {
       set({ isLoggingIn: false });
     }
   },
+
 
   /* Logout API call */
   logout: async () => {
