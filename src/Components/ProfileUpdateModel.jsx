@@ -28,7 +28,8 @@ const ProfileUpdateModel = ({ isModalOpen, closeModal }) => {
 
     if (
       formData?.fullname === userData?.fullname &&
-      formData?.email === userData?.email
+      formData?.email === userData?.email &&
+      !formData?.password
     ) {
       toast.error(
         "Click update profile, only when you want to change the existing data"
