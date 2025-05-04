@@ -1,27 +1,21 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { validateForm } from "../utils/validateForm";
+import { isUpdateProfileFormValid } from "../utils/validateForm";
 import PasswordBar from "../Components/PasswordBar";
 import Modal from "../Components/Modal";
-import {
-  User,
-  Mail,
-  Eye,
-  EyeOff,
-  Loader2,
-  Lock,
-} from "lucide-react"
+import { User, Mail, Eye, EyeOff, Loader2, Lock } from "lucide-react";
+import toast from "react-hot-toast";
 
-const ProfileUpdateModel = ({ closeModel }) => {
+const ProfileUpdateModel = ({ isModalOpen, closeModal }) => {
+  const { checkAuth, userData, isUpdatingProfileData, updateProfileData } =
+    useAuthStore();
+
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     fullname: userData.fullname || "",
     email: userData.email || "",
     password: "",
   });
-
-  const { checkAuth, userData, isUpdatingProfileData, updateProfileData } =
-    useAuthStore();
 
   // Form Ref
   const fullNameRef = useRef(null);
@@ -32,13 +26,22 @@ const ProfileUpdateModel = ({ closeModel }) => {
   const handleUpdateProfileData = async (e) => {
     e.preventDefault();
 
-    const isValid = validateForm("update", formData);
+    if (
+      formData?.fullname === userData?.fullname &&
+      formData?.email === userData?.email
+    ) {
+      toast.error(
+        "Click update profile, only when you want to change the existing data"
+      );
+      return;
+    }
+
+    const isValid = isUpdateProfileFormValid(formData);
 
     if (isValid === true) {
       const isSuccess = await updateProfileData(formData);
 
       if (isSuccess) {
-        setFormData({ fullname: "", email: "", password: "" });
         checkAuth();
       }
     }
@@ -52,7 +55,11 @@ const ProfileUpdateModel = ({ closeModel }) => {
 
   return (
     <>
-      <Modal title={"Update Profile"} closeModel={closeModel}>
+      <Modal
+        title={"Update Profile"}
+        closeModal={closeModal}
+        isModalOpen={isModalOpen}
+      >
         {/* Update profile */}
         {/* Name input element */}
         <form onSubmit={handleUpdateProfileData} className="space-y-6">
@@ -159,7 +166,7 @@ const ProfileUpdateModel = ({ closeModel }) => {
                 Loading...
               </>
             ) : (
-              "Create Account"
+              "Update Profile"
             )}
           </button>
         </form>

@@ -1,7 +1,16 @@
 import { X } from "lucide-react";
-import React, { Children } from "react";
+import React, { useEffect } from "react";
 
-const Modal = ({ title, closeModal, children }) => {
+const Modal = ({ title, closeModal, isModalOpen, children }) => {
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden"; // Prevent background scrolling
+    } else {
+      document.body.style.overflow = "auto";
+    }
+  }, [isModalOpen]);
+
+  if (!isModalOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center text-base-content justify-center backdrop-blur-xs z-50" onClick={closeModal}>
       <div onClick={(e) => e.stopPropagation()} className="bg-base-300 border border-base-content/10 mx-1.5 px-2.5 sm:px-4 py-4 rounded-lg shadow-lg shadow-base-100  w-full max-w-md">
