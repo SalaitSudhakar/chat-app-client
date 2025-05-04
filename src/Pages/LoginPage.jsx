@@ -33,11 +33,10 @@ const LoginPage = () => {
   }, []);
 
   // Get signup api call and isSingingUp state from zustand store
-  const { login, isLogginIn, checkAuth } = useAuthStore();
+  const { login, isLoggingIn, checkAuth } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData)
 
     const isValid = validateForm("login", formData);
 
@@ -141,9 +140,9 @@ const LoginPage = () => {
             <button
               type="submit"
               className="btn btn-primary w-full rounded-lg transform transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-lg hover:bg-primary-focus"
-              disabled={isLogginIn}
+              disabled={isLoggingIn}
             >
-              {isLogginIn ? (
+              {isLoggingIn ? (
                 <>
                   <Loader2 className="size-5 animate-spin" />
                   Loading...

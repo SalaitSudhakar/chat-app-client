@@ -56,7 +56,7 @@ const SignUpPage = () => {
   };
 
   return (
-    <section className="min-h-screen grid lg:grid-cols-2">
+    <section className="min-h-screen grid lg:grid-cols-2 pt-10">
       {/* left side */}
       <div className="flex flex-col justify-center items-center p-5 sm:p-12">
         <div className="w-full max-w-md space-y-8">
@@ -203,10 +203,10 @@ const SignUpPage = () => {
         <img
           src={signupImage}
           alt="Sign up illustration"
-          className="max-w-full mb-8 max-h-screen object-cover mix-blend-screen rounded-lg hover:rounded-2xl transition-all duration-300 border border-base-100 hover:mix-blend-exclusion hover:shadow-lg hover:shadow-base-100"
+          className="max-w-full h-[80%] mb-8 max-h-screen object-cover mix-blend-screen rounded-lg hover:rounded-2xl transition-all duration-300 border border-base-100 hover:mix-blend-exclusion hover:shadow-lg hover:shadow-base-100"
         />
 
-        <h2 className="text-2xl font-bold mb-4">Join Our Community</h2>
+        <h2 className="text-2xl font-bold mb-2">Join Our Community</h2>
         <p className="text-base-content/60">
           Connect with friends, share moments, and stay in touch with your loved
           ones.

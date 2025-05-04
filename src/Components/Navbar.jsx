@@ -1,6 +1,12 @@
 import React from "react";
 import { useAuthStore } from "../store/useAuthStore";
-import { LogIn, LogOut, MessageSquare, Settings } from "lucide-react";
+import {
+  CircleUserRound,
+  LogIn,
+  LogOut,
+  MessageSquare,
+  Settings,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
@@ -16,16 +22,19 @@ const Navbar = () => {
     /* Push profile data */
     navLinks.push({
       name: "profile",
-      icon: (
-        <img
-          src={
-            userData?.profilePic ||
-            "data:image/jpeg;base64,...(your_base64_placeholder)"
-          }
-          alt="Profile Picture"
-          className="border-2 rounded-full w-6 sm:w-8 border-base-content"
-        />
-      ),
+      icon: () => {
+        if (userData?.profilePic) {
+          return (
+            <img
+              src={userData?.profilePic}
+              alt="Profile Picture"
+              className="border-2 rounded-full size-5 sm:size-6 hover:bg-accent border-base-content"
+            />
+          );
+        } else {
+          return <CircleUserRound />;
+        }
+      },
       link: "/profile",
     });
   }
@@ -59,21 +68,20 @@ const Navbar = () => {
                 title={`${link.name} Page`}
                 className="flex items-center gap-1 sm:gap-1.5 p-1.5 "
               >
-                {link.name !== "profile" ? (
-                  <>
-                    <span className="size-5 sm:size-6 flex items-center justify-center">
-                      {link.icon}
-                    </span>
+                <>
+                  <span className="size-5 sm:size-6 flex items-center justify-center">
+                    {typeof link.icon === "function" ? link.icon() : link.icon}
+                  </span>
+                  {((link.name === "profile" && !userData?.profilePic) ||
+                    link.name !== "profile") && (
                     <span className="hidden sm:inline">{link.name}</span>
-                  </>
-                ) : (
-                  <div>{link.icon}</div>
-                )}
+                  )}
+                </>
               </Link>
             </li>
           ))}
 
-          {(userData) && (
+          {userData && (
             <>
               {/* Logout button */}
               <button

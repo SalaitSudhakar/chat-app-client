@@ -32,7 +32,7 @@ export function passwordStrengthBarColor(score, index) {
       if (score === 4) return 'bg-info';
       return 'bg-success';
     }
-    return 'bg-base-content/30';
+    return 'bg-base-content/40';
   }
   
 

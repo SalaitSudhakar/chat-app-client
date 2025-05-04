@@ -2,7 +2,7 @@ import toast from 'react-hot-toast';
 
 export const validateForm = (page, formData) => {
     // Check if all required fields are provided
-    if (page === 'register') {
+    if (page === 'register' || page === 'update') {
       if (!formData.fullname.trim()) {
         return toast.error("Full name is required");
       }
