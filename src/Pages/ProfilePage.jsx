@@ -122,7 +122,7 @@ const ProfilePage = () => {
 
       {/* Open Model to update Profile Data */}
       {isModalOpen && (
-        <ProfileUpdateModel isModalOpen={isModalOpen} closeModal={() => setIsModalOpen(false)} />
+        <ProfileUpdateModel isModalOpen={isModalOpen} closeModal={() => setIsModalOpen(false)} setIsModalOpen={setIsModalOpen}/>
       )}
     </section>
   );

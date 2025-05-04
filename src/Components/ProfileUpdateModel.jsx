@@ -6,7 +6,7 @@ import Modal from "../Components/Modal";
 import { User, Mail, Eye, EyeOff, Loader2, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 
-const ProfileUpdateModel = ({ isModalOpen, closeModal }) => {
+const ProfileUpdateModel = ({ isModalOpen, closeModal, setIsModalOpen }) => {
   const { checkAuth, userData, isUpdatingProfileData, updateProfileData } =
     useAuthStore();
 
@@ -43,7 +43,9 @@ const ProfileUpdateModel = ({ isModalOpen, closeModal }) => {
       const isSuccess = await updateProfileData(formData);
 
       if (isSuccess) {
+        setFormData({ password: "" });
         checkAuth();
+        setIsModalOpen(false);
       }
     }
   };
