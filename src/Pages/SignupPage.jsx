@@ -37,7 +37,7 @@ const SignUpPage = () => {
   }, []);
 
   // Get signup api call and isSingingUp state from zustand store
-  const { signup, isSigningUp } = useAuthStore();
+  const { signup, isSigningUp, checkAuth } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,6 +49,7 @@ const SignUpPage = () => {
 
       if (isSuccess) {
         setFormData({ fullname: "", email: "", password: "" });
+        checkAuth();
         navigate('/')
       }
     }
