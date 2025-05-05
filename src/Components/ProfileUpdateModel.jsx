@@ -32,8 +32,9 @@ const ProfileUpdateModel = ({ isModalOpen, closeModal, setIsModalOpen }) => {
       !formData?.password
     ) {
       toast.error(
-        "Click update profile, only when you want to change the existing data"
+        "No changes detected. Please modify your profile information before updating."
       );
+
       return;
     }
 

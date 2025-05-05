@@ -11,8 +11,10 @@ import FadeLoader from "react-spinners/FadeLoader";
 import ProtectedRoute from "./Components/ProtectedRoute";
 import AuthGuard from "./Components/AuthGuard";
 import { Toaster } from 'react-hot-toast';
+import { useThemeStore } from "./Store/useThemeStore";
 
 const App = () => {
+  const { theme } = useThemeStore();
   const { userData, checkAuth, isCheckingAuth } = useAuthStore();
 
   useEffect(() => {
@@ -28,7 +30,7 @@ const App = () => {
   }
 
   return (
-    <div className="relative min-h-screen">
+    <div data-theme={theme} className="relative min-h-screen pt-16 sm:pt-24 lg:pt-30">
       <BrowserRouter>
         <Toaster position="top-right" reverseOrder={false} />
         <Navbar />

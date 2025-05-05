@@ -18,7 +18,7 @@ const Modal = ({ title, closeModal, isModalOpen, children }) => {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-base-300 border border-base-content/10 mx-1.5 px-2.5 sm:px-4 py-4 rounded-lg shadow-lg shadow-base-100  w-full max-w-md"
+        className="bg-base-300 border border-base-content/40 mx-1.5 px-2.5 sm:px-4 py-4 rounded-lg shadow-lg shadow-base-100  w-full max-w-md"
       >
         <div className="flex justify-between mb-4">
           <h3 className="text-xl font-semibold">{title}</h3>
