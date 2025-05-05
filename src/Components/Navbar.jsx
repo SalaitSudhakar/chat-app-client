@@ -110,7 +110,7 @@ const Navbar = () => {
               <div
                 tabIndex={0}
                 role="button"
-                className="btn p-1 sm:p-2 sm:m-1 hover:text-base-content hover:bg-base-200 transition-colors duration-200"
+                className="btn p-1 sm:p-2 sm:m-1 hover:text-base-200 hover:bg-base-content transition-colors duration-200"
               >
                 <div className="flex items-center gap-1 sm:gap-2 ">
                   {CurrentThemeIcon && (

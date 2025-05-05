@@ -38,7 +38,11 @@ const SettingsPage = () => {
                     key={t.id}
                     className={`
                 group flex flex-col items-center gap-1.5 p-2 rounded-lg cursor-pointer 
-                 transition-colors duration-150 ${theme === t.id ? 'bg-neutral': 'bg-base-200 hover:bg-base-content/10'}
+                 transition-colors duration-150 ${
+                   theme === t.id
+                     ? "bg-neutral"
+                     : "bg-base-200 hover:bg-base-content/10"
+                 }
               `}
                     onClick={() => setTheme(t.id)}
                   >
@@ -53,7 +57,11 @@ const SettingsPage = () => {
                         <div className="rounded flex-1 bg-neutral"></div>
                       </div>
                     </div>
-                    <span className={`text-[11px] ${theme === t.id && 'text-neutral-content'} font-medium truncate w-full text-center`}>
+                    <span
+                      className={`text-[11px] ${
+                        theme === t.id && "text-neutral-content"
+                      } font-medium truncate w-full text-center`}
+                    >
                       {t.name}
                     </span>
                   </button>
@@ -80,23 +88,38 @@ const SettingsPage = () => {
                   </div>
                 </div>
 
-                <div className="bg-base-100 p-4 h-64 overflow-y-auto space-y-4">
-                  {PREVIEW_MESSAGES.map((msg) => (
+                {/* Chat Messages */}
+                <div className="p-4 space-y-4 min-h-[200px] max-h-[200px] overflow-y-auto bg-base-100">
+                  {PREVIEW_MESSAGES.map((message) => (
                     <div
-                      key={msg.id}
-                      className={`chat ${
-                        msg.isSent ? "chat-end" : "chat-start"
+                      key={message.id}
+                      className={`flex  ${
+                        message.isSent ? "justify-end" : "justify-start"
                       }`}
                     >
                       <div
-                        className={`chat-bubble ${
-                          msg.isSent ? "chat-bubble-secondary" : ""
-                        }`}
+                        className={`
+                          flex flex-col max-w-[80%] rounded-xl p-3 shadow-sm 
+                          ${
+                            message.isSent
+                              ? "bg-primary text-primary-content"
+                              : "bg-base-200"
+                          }
+                        `}
                       >
-                        {msg.content}
-                      </div>
-                      <div className="chat-footer opacity-50 text-xs">
-                        10.30am
+                        <p className="text-sm">{message.content}</p>
+                        <p
+                          className={`
+                            text-[10px] mt-1.5 
+                            ${
+                              message.isSent
+                                ? "text-primary-content/70"
+                                : "text-base-content/70"
+                            }
+                          `}
+                        >
+                          12:00 PM
+                        </p>
                       </div>
                     </div>
                   ))}

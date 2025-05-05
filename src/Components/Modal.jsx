@@ -28,7 +28,7 @@ const Modal = ({ title, closeModal, isModalOpen, children }) => {
           >
             <X className="font-medium size-8 p-1 " />
           </button>
-        </div>
+        </div> 
 
         {/* Modal Content */}
         <div className="mb-4">{children}</div>
