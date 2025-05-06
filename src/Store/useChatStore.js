@@ -9,7 +9,7 @@ export const useChatStore = create((set) => ({
   isUserLoading: false,
   isMessageLoading: false,
 
-  getUser: async () => {
+  getUsers: async () => {
     set({ isUserLoading: true });
 
     try {
@@ -38,4 +38,6 @@ export const useChatStore = create((set) => ({
       toast.error(error?.response?.data?.message || "Error Fetching Messages");
     }
   },
+
+  setSelectedUser: (selectedUser) => set({ selectedUser }),
 }));
