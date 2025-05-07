@@ -1,22 +1,27 @@
 import { create } from "zustand";
 import { api } from "../Config/axiosConfig";
 import toast from "react-hot-toast";
+import { io } from "socket.io-client";
 
-export const useAuthStore = create((set) => ({
-  userData: null, // To check user loggin state
-  isSigningUp: false, // To create loading animation during signUp
-  isLoggingIn: false, // To create loading animation during login
-  isUpdatingProfilePic: false, // Loading animation on profile page
-  isUpdatingProfileData: false, // Loading animation on profile page
+const BASE_URL =
+  import.meta.env.VITE_MODE === "development" ? "http://localhost:5000" : "/";
 
-  isCheckingAuth: true, // To track the below checkAuth state api call trigger
+export const useAuthStore = create((set, get) => ({
+  userData: null,
+  isSigningUp: false,
+  isLoggingIn: false,
+  isUpdatingProfilePic: false,
+  isUpdatingProfileData: false,
+  onlineUsers: [],
+  socket: null,
 
-  /* Check user authenticated */
+  isCheckingAuth: true,
+
   checkAuth: async () => {
     try {
       const response = await api.get("/auth/check-authenticated");
-
       set({ userData: response.data.userData });
+      get().connectSocket();
     } catch (error) {
       set({ userData: null });
     } finally {
@@ -24,25 +29,23 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  /* Sign up API call */
   signup: async (data) => {
-    // Set the singingup state to true
     set({ isSigningUp: true });
     try {
-      const response = await api.post("/auth/signup", data); //API call
-
+      const response = await api.post("/auth/signup", data);
       const { userData, message } = response.data;
 
       toast.success(message || "Account Created Successfully");
 
-      set({ userData: userData }); // Set user Data
+      set({ userData });
+      get().connectSocket();
 
       return true;
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-          error.message ||
-          "Something Went Wrong"
+        error.message ||
+        "Something Went Wrong"
       );
       return false;
     } finally {
@@ -50,7 +53,6 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  /* Login */
   login: async (data) => {
     set({ isLoggingIn: true });
 
@@ -60,8 +62,9 @@ export const useAuthStore = create((set) => ({
       if (response && response.data) {
         const { userData, message } = response.data;
 
-        set({ userData: userData || null });
+        set({ userData });
         toast.success(message || "Login Successful");
+        get().connectSocket();
         return true;
       } else {
         throw new Error("Invalid response from server");
@@ -69,8 +72,8 @@ export const useAuthStore = create((set) => ({
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-          error.message ||
-          "Something Went Wrong. Try Again!"
+        error.message ||
+        "Something Went Wrong. Try Again!"
       );
       return false;
     } finally {
@@ -78,69 +81,89 @@ export const useAuthStore = create((set) => ({
     }
   },
 
-  /* Logout API call */
   logout: async () => {
     try {
       const response = await api.post("/auth/logout");
       set({ userData: null });
       toast.success(response?.data?.message || "Logout Successfully");
-
+      get().disconnectSocket();
       window.location = "/login";
     } catch (error) {
       toast.error(error?.response?.data?.message || "Something went wrong");
     }
   },
 
-  /* Update profile pic */
   updateProfilePic: async (data) => {
-    set({ isUpdatingProfilePic: true }); // set profile pic updating true
+    set({ isUpdatingProfilePic: true });
 
-    // Method 1: Using forEach
-    data.forEach((value, key) => {
-      console.log(key, value);
-    });
-    
     try {
-      const response = await api.patch("/user/update/profile-pic", data); // Update profile API call
-
-      // destructure userdata and message
+      const response = await api.patch("/user/update/profile-pic", data);
       const { userData, message } = response.data;
 
-      // Set UserData
-      set({ userData: userData });
+      set({ userData });
       toast.success(message || "Profile Pic Updated Successfully");
       return true;
     } catch (error) {
       toast.error(
-        error.response.data.message || "Error Updating Profile Pic. Try Again!"
+        error?.response?.data?.message || "Error Updating Profile Pic. Try Again!"
       );
       return false;
     } finally {
-      set({ isUpdatingProfilePic: false }); // Make false isUpdating profile pic state
+      set({ isUpdatingProfilePic: false });
     }
   },
 
-  /* Update Profile Data */
   updateProfileData: async (data) => {
-    set({ isUpdatingProfileData: true }); // set profile pic updating true
+    set({ isUpdatingProfileData: true });
 
     try {
-      const response = await api.put("/user/update/profile", data); // Update profile API call
-
-      // destructure userdata and message
+      const response = await api.put("/user/update/profile", data);
       const { userData, message } = response.data;
 
-      // Set UserData
-      set({ userData: userData });
+      set({ userData });
       toast.success(message || "Profile Data Updated Successfully");
       return true;
     } catch (error) {
       toast.error(
-        error.response.data.message || "Error Updating Profile data. Try Again!"
+        error?.response?.data?.message || "Error Updating Profile data. Try Again!"
       );
       return false;
     } finally {
-      set({ isUpdatingProfileData: false }); // Make false isUpdating profile pic state
+      set({ isUpdatingProfileData: false });
+    }
+  },
+
+  connectSocket: () => {
+    const { userData } = get();
+    if (!userData || get().socket?.connected) return;
+
+    const socket = io(BASE_URL, {
+      query: { userId: userData._id },
+      // reconnection: true,
+      // reconnectionAttempts: 5,
+      // reconnectionDelay: 1000,
+    });
+
+    socket.on("connect", () => {
+      console.log("Socket connected:", socket.id);
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Socket disconnected");
+    });
+
+    socket.on("getOnlineUsers", (userIds) => {
+      set({ onlineUsers: userIds });
+    });
+
+    set({ socket });
+  },
+
+  disconnectSocket: () => {
+    const socket = get().socket;
+    if (socket?.connected) {
+      socket.disconnect();
+      set({ socket: null, onlineUsers: [] });
     }
   },
 }));

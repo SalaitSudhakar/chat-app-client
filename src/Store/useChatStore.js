@@ -1,8 +1,9 @@
 import { create } from "zustand";
 import { toast } from "react-hot-toast";
 import { api } from "./../Config/axiosConfig";
+import { useAuthStore } from "./useAuthStore";
 
-export const useChatStore = create((set) => ({
+export const useChatStore = create((set, get) => ({
   messages: [],
   users: [],
   selectedUser: null,
@@ -16,7 +17,6 @@ export const useChatStore = create((set) => ({
       const response = await api.get("user/get-users");
 
       const { users } = response.data;
-
       set({ users: users });
     } catch (error) {
       toast.error(error?.response?.data?.message || "Error Fetching Users");
@@ -30,14 +30,50 @@ export const useChatStore = create((set) => ({
 
     try {
       const response = await api.get(`/message/${id}`);
-
       const { messages } = response.data;
-
       set({ messages: messages });
     } catch (error) {
       toast.error(error?.response?.data?.message || "Error Fetching Messages");
+    } finally {
+      set({ isMessageLoading: false });
     }
   },
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
+
+  sendMessage: async (messageData) => {
+    const { selectedUser, messages } = get();
+    try {
+      const response = await api.post(
+        `/message/send/${selectedUser._id}`,
+        messageData
+      );
+      const { newMessage } = response.data;
+      set({ messages: [...messages, newMessage] });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Error Sending Message");
+    }
+  },
+
+  subscribeToMessages: () => {
+    const { selectedUser } = get();
+    if (!selectedUser) return;
+
+    const socket = useAuthStore.getState()?.socket;
+
+    socket.on("newMessage", (newMessage) => {
+      const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+      if (!isMessageSentFromSelectedUser) return;
+
+      set({
+        messages: [...get().messages, newMessage],
+      });
+    });
+  },
+
+  unsubscribeFromMessages: () => {
+    const socket = useAuthStore.getState()?.socket;
+    socket.off("newMessage");
+  },
+
 }));
