@@ -7,6 +7,7 @@ import MessageSkeleton from "./skeletons/MessageSkeleton";
 import { useAuthStore } from "../store/useAuthStore";
 import { formatMessageTime } from "../utils/formatMessageTime";
 import avatarImage from '../assets/avatar.png'
+import groupMessagesByFormattedDate from "../utils/groupMessagesByFormattedDate";
 
 const ChatContainer = () => {
   const {
@@ -20,6 +21,7 @@ const ChatContainer = () => {
   const { userData } = useAuthStore();
   const messageEndRef = useRef(null);
 
+  /* Fetch message */
   useEffect(() => {
     getMessages(selectedUser._id);
 
@@ -28,11 +30,15 @@ const ChatContainer = () => {
     return () => unsubscribeFromMessages();
   }, [selectedUser._id, getMessages, subscribeToMessages, unsubscribeFromMessages]);
 
+  // Smooth scroll animation
   useEffect(() => {
     if (messageEndRef.current && messages) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  const groupedMessages = groupMessagesByFormattedDate(messages);
+  console.log("Messages: ", groupedMessages)
 
   if (isMessagesLoading) {
     return (
@@ -44,50 +50,59 @@ const ChatContainer = () => {
     );
   }
 
-  return (
-    <div className="flex-1 flex flex-col overflow-auto">
-      <ChatHeader />
+ return (
+  <div className="flex-1 flex flex-col overflow-auto">
+    <ChatHeader />
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((message) => (
-          <div
-            key={message._id}
-            className={`chat ${message.senderId === userData._id ? "chat-end" : "chat-start"}`}
-            ref={messageEndRef}
-          >
-            <div className=" chat-image avatar">
-              <div className="size-10 rounded-full border">
-                <img
-                  src={
-                    message.senderId === userData._id
-                      ? userData.profilePic || avatarImage
-                      : selectedUser.profilePic || avatarImage
-                  }
-                  alt="profile pic"
-                />
+    <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {Object.entries(groupedMessages).map(([date, msgs]) => (
+        <div key={date}>
+          {/* Date Header */}
+          <div className="text-center my-4 text-gray-500 font-medium">{date}</div>
+
+          {msgs.map((message) => (
+            <div
+              key={message._id}
+              className={`chat ${
+                message.senderId === userData._id ? "chat-end" : "chat-start"
+              }`}
+              ref={messageEndRef}
+            >
+              <div className="chat-image avatar">
+                <div className="size-10 rounded-full border">
+                  <img
+                    src={
+                      message.senderId === userData._id
+                        ? userData.profilePic || avatarImage
+                        : selectedUser.profilePic || avatarImage
+                    }
+                    alt="profile pic"
+                  />
+                </div>
+              </div>
+              <div className="chat-header mb-1">
+                <time className="text-xs opacity-50 ml-1">
+                  {formatMessageTime(message.createdAt)}
+                </time>
+              </div>
+              <div className="chat-bubble flex flex-col">
+                {message.image && (
+                  <img
+                    src={message.image}
+                    alt="Attachment"
+                    className="sm:max-w-[200px] rounded-md mb-2"
+                  />
+                )}
+                {message.text && <p>{message.text}</p>}
               </div>
             </div>
-            <div className="chat-header mb-1">
-              <time className="text-xs opacity-50 ml-1">
-                {formatMessageTime(message.createdAt)}
-              </time>
-            </div>
-            <div className="chat-bubble flex flex-col">
-              {message.image && (
-                <img
-                  src={message.image}
-                  alt="Attachment"
-                  className="sm:max-w-[200px] rounded-md mb-2"
-                />
-              )}
-              {message.text && <p>{message.text}</p>}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <MessageInput />
+          ))}
+        </div>
+      ))}
     </div>
-  );
+
+    <MessageInput />
+  </div>
+);
 };
 export default ChatContainer;
