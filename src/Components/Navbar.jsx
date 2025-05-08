@@ -5,11 +5,11 @@ import {
   CircleUserRound,
   LogIn,
   LogOut,
-  MessageSquare, 
+  MessageSquare,
   Settings,
   SquareChevronRight,
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { THEMES } from "../constants/themes";
 import { themeIconMap } from "../constants/iconMap";
 import { useThemeStore } from "../Store/useThemeStore";
@@ -20,6 +20,7 @@ const Navbar = () => {
   const { setIsSidebarOpen } = useSidebarStore();
   const { logout, userData } = useAuthStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const location = useLocation();
 
   const { theme, setTheme } = useThemeStore();
 
@@ -30,7 +31,6 @@ const Navbar = () => {
   }));
 
   const CurrentThemeIcon = themeIconMap[theme];
-  console.log(CurrentThemeIcon);
 
   const iconSize = "size-5 sm:size-6";
   const navLinks = [
@@ -68,20 +68,28 @@ const Navbar = () => {
     });
   }
 
+  // Check if the current path is the home page
+  const shouldHideChevron = location.pathname !== "/"; // Hide on any path other than "/"
+  
   return (
     <nav
       className=" border-b h-20 border-base-300 fixed w-full top-0 z-40 
     backdrop-blur-lg bg-base-100/80 shadow-md shadow-base-content/70"
     >
-      <div className="container mx-auto p-4 flex items-center justify-between">
+      <div className="container mx-auto py-4 px-2 lg:px-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           {/* Toggle button */}
           <button
-            onClick={setIsSidebarOpen}
+            onClick={() => setIsSidebarOpen()}
             className="lg:hidden mr-2 p-2 rounded-md hover:bg-base-300"
             title="Toggle Sidebar"
           >
-            <SquareChevronRight  className="w-6 h-6" />
+            {/* Conditionally render the chevron only if we're on the home path */}
+            {!shouldHideChevron && (
+              <SquareChevronRight
+                className="cursor-pointer"
+              />
+            )}
           </button>
 
           {/* Logo */}
@@ -92,12 +100,12 @@ const Navbar = () => {
             <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
               <MessageSquare className="w-5 h-5 sm:w-7 sm:h-7 text-base-content/80" />
             </div>
-            <h1 className="sm:text-xl">Chat App</h1>
+            <h1 className="lg:text-xl">Chat App</h1>
           </Link>
         </div>
 
         {/* Right side Links */}
-        <ul className="flex gap-1 sm:gap-4 items-center justify-end">
+        <ul className="flex gap-1 sm:gap-2 lg:gap-4 items-center justify-end">
           {navLinks.map((link, index) => (
             <li
               key={index}

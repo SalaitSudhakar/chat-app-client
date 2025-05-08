@@ -54,7 +54,7 @@ const LoginPage = () => {
   return (
     <section className="min-h-screen grid lg:grid-cols-2 pt-5">
       {/* left side */}
-      <div className="flex flex-col justify-center items-center p-5 sm:p-12">
+      <div className="flex flex-col justify-center items-center p-5 sm:p-12 pt-0">
         <div className="w-full max-w-md space-y-8">
           {/* LOGO */}
           <div className="text-center mb-8">
@@ -170,7 +170,7 @@ const LoginPage = () => {
         <img
           src={loginImage}
           alt="Sign up illustration"
-          className="max-w-full mb-8 max-h-screen object-cover mix-blend-screen rounded-lg hover:rounded-2xl transition-all duration-300 border border-base-100 hover:mix-blend-exclusion hover:shadow-lg hover:shadow-base-100"
+          className="max-w-full mb-8 max-h-screen object-cover rounded-lg hover:rounded-2xl transition-all duration-300 border border-base-100  hover:shadow-lg hover:shadow-base-100"
         />
 
         <h2 className="text-2xl font-bold mb-4">Welcome back to our app</h2>

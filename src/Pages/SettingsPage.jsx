@@ -20,7 +20,7 @@ const SettingsPage = () => {
   }));
 
   return (
-    <section className="flex justify-center items-start min-h-screen py-10  px-4">
+    <section className="flex justify-center items-start min-h-screen pb-10 pt-5 px-4">
       <div className="w-full max-w-5xl">
         <h1 className="text-3xl font-bold mb-8 text-center">Settings</h1>
 

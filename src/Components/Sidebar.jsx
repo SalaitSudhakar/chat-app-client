@@ -4,7 +4,7 @@ import { useAuthStore } from "../Store/useAuthStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
 import { Users, SquareChevronLeft } from "lucide-react";
 import { useSidebarStore } from "../Store/useSidebarStore";
-import avatarImage from '../assets/avatar.png'
+import avatarImage from "../assets/avatar.png";
 
 const Sidebar = () => {
   const { isSidebarOpen, setIsSidebarOpen } = useSidebarStore();
@@ -51,10 +51,12 @@ const Sidebar = () => {
               <span className="font-medium hidden lg:block">Contacts</span>
             </div>
             {/* Hide close icon on large screens */}
-            <SquareChevronLeft
-              onClick={() => setIsSidebarOpen(false)}
-              className="cursor-pointer lg:hidden"
-            />
+            <div className="hover:bg-base-300 p-1.5 rounded-lg">
+              <SquareChevronLeft
+                onClick={() => setIsSidebarOpen(false)}
+                className="cursor-pointer lg:hidden"
+              />
+            </div>
           </div>
 
           <div className="mt-3 flex items-center gap-2">

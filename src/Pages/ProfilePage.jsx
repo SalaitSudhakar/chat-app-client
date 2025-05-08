@@ -38,7 +38,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <section className="max-w-2xl mx-auto p-1.5 sm:p-4  py-8 pt-24">
+    <section className="max-w-2xl mx-auto p-1.5 sm:p-4  py-8 ">
       <div>
         <div className="bg-base-300 rounded-xl px-4 sm:px-6  py-6 space-y-6">
           <div className="text-center">
