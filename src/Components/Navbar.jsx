@@ -32,7 +32,7 @@ const Navbar = () => {
 
   const CurrentThemeIcon = themeIconMap[theme];
 
-  const iconSize = "size-5 sm:size-6";
+  const iconSize = "size-5 lg:size-6";
   const navLinks = [
     {
       name: "Settings",
@@ -55,7 +55,7 @@ const Navbar = () => {
         if (userData?.profilePic) {
           return (
             <div className="avatar">
-              <div className="w-6  sm:w-7 rounded-full border-2 border-base-content">
+              <div className="w-6 lg:w-7 rounded-full border-2 border-base-content">
                 <img src={userData?.profilePic} alt="Profile Picture" />
               </div>
             </div>
@@ -81,7 +81,7 @@ const Navbar = () => {
           {/* Toggle button */}
           <button
             onClick={() => setIsSidebarOpen()}
-            className="lg:hidden mr-2 p-2 rounded-md hover:bg-base-300"
+            className={`lg:hidden ${!shouldHideChevron && "ml-2" } p-2 rounded-md hover:bg-base-300`}
             title="Toggle Sidebar"
           >
             {/* Conditionally render the chevron only if we're on the home path */}
@@ -95,12 +95,13 @@ const Navbar = () => {
           {/* Logo */}
           <Link
             to={"/"}
+            title="home"
             className="flex gap-1 sm:gap-1.5 justify-center items-center font-bold"
           >
             <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
               <MessageSquare className="w-5 h-5 sm:w-7 sm:h-7 text-base-content/80" />
             </div>
-            <h1 className="lg:text-xl">Chat App</h1>
+            <h1 className="hidden lg:text-xl">Chat App</h1>
           </Link>
         </div>
 
@@ -121,7 +122,7 @@ const Navbar = () => {
                     {typeof link.icon === "function" ? link.icon() : link.icon}
                   </span>
 
-                  <span className="hidden sm:inline">{link.name}</span>
+                  <span className="hidden sm:inline text-sm lg:text-base">{link.name}</span>
                 </>
               </Link>
             </li>
@@ -134,13 +135,13 @@ const Navbar = () => {
                 role="button"
                 className="btn p-1 sm:p-2 sm:m-1 hover:text-base-200 hover:bg-base-content transition-colors duration-200"
               >
-                <div className="flex items-center gap-1 sm:gap-2 ">
+                <div className="flex items-center gap-1 sm:gap-1.5 lg:gap-2 ">
                   {CurrentThemeIcon && (
-                    <CurrentThemeIcon className="size-5 sm:size-6" />
+                    <CurrentThemeIcon className="size-5 lg:size-6" />
                   )}
-                  <span className="capitalize hidden sm:inline">{theme}</span>
+                  <span className="capitalize sm:text-sm lg:text-base hidden sm:inline">{theme}</span>
                 </div>
-                <ChevronDown className="size-5 sm:size-6" />
+                <ChevronDown className="size-5 lg:size-6" />
               </div>
               <ul
                 tabIndex={0}
@@ -180,11 +181,11 @@ const Navbar = () => {
             <>
               {/* Logout button */}
               <button
-                className="flex gap-1 items-center cursor-pointer p-2 rounded-full  hover:text-error hover:bg-base-300 transition-all duration-300"
+                className="flex gap-1 items-center cursor-pointer sm:text-sm lg:text-base p-2 rounded-full  hover:text-error hover:bg-base-300 transition-all duration-300"
                 title="logout"
                 onClick={logout}
               >
-                <LogOut className="size-5" />
+                <LogOut className="size-5 sm:size-4 lg:size-5" />
                 <span className="hidden sm:inline">Logout</span>
               </button>
             </>
