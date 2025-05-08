@@ -23,7 +23,7 @@ const App = () => {
 
   if (isCheckingAuth && !userData) {
     return (
-      <div className="flex items-center justify-center h-screen t ">
+      <div className="flex items-center justify-center h-screen text-primary ">
         <FadeLoader />
       </div>
     );

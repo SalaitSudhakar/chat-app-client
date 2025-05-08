@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useChatStore } from "../Store/useChatStore";
 import { useAuthStore } from "../Store/useAuthStore";
 import SidebarSkeleton from "./skeletons/SidebarSkeleton";
-import { Users, SquareChevronLeft } from "lucide-react";
+import { Users, SquareChevronLeft, Search } from "lucide-react";
 import { useSidebarStore } from "../Store/useSidebarStore";
 import avatarImage from "../assets/avatar.png";
 
@@ -13,14 +13,28 @@ const Sidebar = () => {
 
   const { onlineUsers } = useAuthStore();
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+  const [searchChat, setSearchChat] = useState("");
 
   useEffect(() => {
     getUsers();
   }, [getUsers]);
 
-  const filteredUsers = showOnlineOnly
-    ? users.filter((user) => onlineUsers.includes(user._id))
-    : users;
+  console.log(searchChat)
+  const filterFunction = () => {
+    let filtered = showOnlineOnly
+      ? users.filter((user) => onlineUsers.includes(user._id))
+      : users;
+
+    if (searchChat.trim() !== "") {
+      filtered = filtered.filter((user) =>
+        user.fullname.toLowerCase().includes(searchChat.toLowerCase())
+      );
+    }
+
+    return filtered;
+  };
+
+  const filteredUsers = filterFunction();
 
   if (isUsersLoading) return <SidebarSkeleton />;
 
@@ -72,6 +86,19 @@ const Sidebar = () => {
             <span className="text-xs text-zinc-500">
               ({onlineUsers.length - 1} online)
             </span>
+          </div>
+          <div className="mt-3 flex items-center gap-2 w-full">
+            <label className="cursor-pointer relative flex items-center gap-2 w-full">
+              <input
+                type="text"
+                placeholder="Search Chat"
+                onChange={(e) => setSearchChat(e.target.value)}
+                className="input input-sm w-full"
+              />
+              <span className="text-sm absolute right-1.5 top-1.5 text-base-content/50 z-10">
+                <Search className="size-4 sm:size-5" />
+              </span>
+            </label>
           </div>
         </div>
 
