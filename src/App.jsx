@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Navbar from "./Components/Navbar";
 import HomePage from "./Pages/HomePage";
@@ -30,7 +30,7 @@ const App = () => {
   }
 
   return (
-    <div data-theme={theme} className="relative min-h-screen pt-16 sm:pt-24 lg:pt-30">
+    <div data-theme={theme} className="relative min-h-screen pt-20 sm:pt-24 lg:pt-30">
       <BrowserRouter>
         <Toaster position="top-right" reverseOrder={false} />
         <Navbar />

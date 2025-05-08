@@ -10,7 +10,7 @@ const HomePage = () => {
   return (
     <div className=" px-4 lg:-mt-20 pt-16 bg-base-100">
       <div className="flex items-center justify-center h-full">
-        <div className="bg-base-100 rounded-lg shadow-xl w-full max-w-6xl flex h-[calc(100vh-8rem)]">
+        <div className="bg-base-100 rounded-lg shadow-xl w-full max-w-7xl flex h-[calc(100vh-8rem)]">
           <Sidebar />
           {selectedUser ? <ChatContainer /> : <WelcomeChatMessage />}
         </div>

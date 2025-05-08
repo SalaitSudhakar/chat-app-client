@@ -5,16 +5,19 @@ import {
   CircleUserRound,
   LogIn,
   LogOut,
-  MessageSquare,
+  MessageSquare, 
   Settings,
+  SquareChevronRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { THEMES } from "../constants/themes";
 import { themeIconMap } from "../constants/iconMap";
 import { useThemeStore } from "../Store/useThemeStore";
 import { Check } from "lucide-react";
+import { useSidebarStore } from "../Store/useSidebarStore";
 
 const Navbar = () => {
+  const { setIsSidebarOpen } = useSidebarStore();
   const { logout, userData } = useAuthStore();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -52,7 +55,7 @@ const Navbar = () => {
         if (userData?.profilePic) {
           return (
             <div className="avatar">
-              <div className="w-6 sm:w-7 rounded-full border-2 border-base-content">
+              <div className="w-6  sm:w-7 rounded-full border-2 border-base-content">
                 <img src={userData?.profilePic} alt="Profile Picture" />
               </div>
             </div>
@@ -67,20 +70,31 @@ const Navbar = () => {
 
   return (
     <nav
-      className=" border-b border-base-300 fixed w-full top-0 z-40 
+      className=" border-b h-20 border-base-300 fixed w-full top-0 z-40 
     backdrop-blur-lg bg-base-100/80 shadow-md shadow-base-content/70"
     >
       <div className="container mx-auto p-4 flex items-center justify-between">
-        <Link
-          to={"/"}
-          className="flex gap-1 sm:gap-1.5 justify-center items-center font-bold"
-        >
-          <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
-            <MessageSquare className="w-5 h-5 sm:w-7 sm:h-7 text-base-content/80" />
-          </div>
+        <div className="flex items-center gap-2">
+          {/* Toggle button */}
+          <button
+            onClick={setIsSidebarOpen}
+            className="lg:hidden mr-2 p-2 rounded-md hover:bg-base-300"
+            title="Toggle Sidebar"
+          >
+            <SquareChevronRight  className="w-6 h-6" />
+          </button>
 
-          <h1 className="sm:text-xl">Chat App</h1>
-        </Link>
+          {/* Logo */}
+          <Link
+            to={"/"}
+            className="flex gap-1 sm:gap-1.5 justify-center items-center font-bold"
+          >
+            <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
+              <MessageSquare className="w-5 h-5 sm:w-7 sm:h-7 text-base-content/80" />
+            </div>
+            <h1 className="sm:text-xl">Chat App</h1>
+          </Link>
+        </div>
 
         {/* Right side Links */}
         <ul className="flex gap-1 sm:gap-4 items-center justify-end">

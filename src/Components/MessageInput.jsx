@@ -6,25 +6,25 @@ import toast from "react-hot-toast";
 const MessageInput = () => {
   const [text, setText] = useState("");
   const [imagePreview, setImagePreview] = useState(null);
-  const [image, setImage] = useState(null)
+  const [image, setImage] = useState(null);
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file  || !file.type.startsWith("image/")) {
+    if (!file || !file.type.startsWith("image/")) {
       toast.error("Please select an image file");
       return;
     }
 
     if (file && file.type.startsWith("image/")) {
-      setImage(file)
+      setImage(file);
       setImagePreview(URL.createObjectURL(file));
     }
   };
 
   const removeImage = () => {
-    setImage(null)
+    setImage(null);
     setImagePreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
@@ -36,10 +36,10 @@ const MessageInput = () => {
     const messageData = new FormData();
 
     if (text) {
-        messageData.append("text", text.trim())
+      messageData.append("text", text.trim());
     }
     if (image) {
-        messageData.append('image', image)
+      messageData.append("image", image);
     }
     try {
       await sendMessage(messageData);
@@ -47,7 +47,7 @@ const MessageInput = () => {
       // Clear form
       setText("");
       setImagePreview(null);
-      setImage(null)
+      setImage(null);
       if (fileInputRef.current) fileInputRef.current.value = "";
     } catch (error) {
       toast.error("Failed to send message:", error);
@@ -97,12 +97,12 @@ const MessageInput = () => {
 
           <button
             type="button"
-            className={`hidden sm:flex btn btn-circle
+            className={`flex btn btn-circle
                      ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
             onClick={() => fileInputRef.current?.click()}
             aria-label="Upload Image"
           >
-            <Image size={20} />
+            <Image className="size-5 sm:size-6" />
           </button>
         </div>
         <button
@@ -111,7 +111,7 @@ const MessageInput = () => {
           disabled={!text.trim() && !imagePreview}
           aria-label="send message"
         >
-          <Send size={22} />
+          <Send className="size-5 sm:size-6" />
         </button>
       </form>
     </div>
