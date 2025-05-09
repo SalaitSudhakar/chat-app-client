@@ -151,17 +151,14 @@ export const useAuthStore = create((set, get) => ({
 
       // Event listeners
       socket.on("connect", () => {
-        console.log(`Socket connected for user: ${userData._id}`);
         set({ socketConnected: true });
       });
 
       socket.on("disconnect", () => {
-        console.log(`Socket disconnected for user: ${userData._id}`);
         set({ socketConnected: false });
       });
 
       socket.on("connect_error", (error) => {
-        console.error("Socket connection error:", error);
         toast.error("Connection to chat server failed. Retrying...");
       });
 
@@ -171,7 +168,7 @@ export const useAuthStore = create((set, get) => ({
 
       set({ socket });
     } catch (error) {
-      console.error("Error establishing socket connection:", error);
+
       toast.error("Failed to connect to chat server");
     }
   },
