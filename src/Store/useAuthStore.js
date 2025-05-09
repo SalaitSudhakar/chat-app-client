@@ -3,8 +3,11 @@ import { api } from "../Config/axiosConfig";
 import toast from "react-hot-toast";
 import { io } from "socket.io-client";
 
-const BASE_URL =
-  import.meta.env.VITE_MODE === "development" ? import.meta.env.VITE_SOCKET_URL : "/";
+// Better handling of socket URL for different environments
+const BASE_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin;
+
+// Log the Socket.IO connection URL for debugging
+console.log(`Socket.IO connecting to: ${BASE_URL}`);
 
 export const useAuthStore = create((set, get) => ({
   userData: null,
@@ -14,6 +17,7 @@ export const useAuthStore = create((set, get) => ({
   isUpdatingProfileData: false,
   onlineUsers: [],
   socket: null,
+  socketConnected: false,
 
   isCheckingAuth: true,
 
@@ -137,25 +141,47 @@ export const useAuthStore = create((set, get) => ({
     const { userData } = get();
     if (!userData || get().socket?.connected) return;
 
-    const socket = io(BASE_URL, {
-      query: { userId: userData._id },
-      // reconnection: true,
-      // reconnectionAttempts: 5,
-      // reconnectionDelay: 1000,
-    });
+    try {
+      const socket = io(BASE_URL, {
+        query: { userId: userData._id },
+        reconnection: true,
+        reconnectionAttempts: 5,
+        reconnectionDelay: 1000,
+      });
 
-    socket.on("getOnlineUsers", (userIds) => {
-      set({ onlineUsers: userIds });
-    });
+      // Event listeners
+      socket.on("connect", () => {
+        console.log(`Socket connected for user: ${userData._id}`);
+        set({ socketConnected: true });
+      });
 
-    set({ socket });
+      socket.on("disconnect", () => {
+        console.log(`Socket disconnected for user: ${userData._id}`);
+        set({ socketConnected: false });
+      });
+
+      socket.on("connect_error", (error) => {
+        console.error("Socket connection error:", error);
+        toast.error("Connection to chat server failed. Retrying...");
+      });
+
+      socket.on("getOnlineUsers", (userIds) => {
+        set({ onlineUsers: userIds });
+      });
+
+      set({ socket });
+    } catch (error) {
+      console.error("Error establishing socket connection:", error);
+      toast.error("Failed to connect to chat server");
+    }
   },
 
   disconnectSocket: () => {
     const socket = get().socket;
-    if (socket?.connected) {
+    if (socket) {
       socket.disconnect();
-      set({ socket: null, onlineUsers: [] });
+      set({ socket: null, onlineUsers: [], socketConnected: false });
+      console.log("Socket disconnected manually");
     }
   },
-}));
+});
