@@ -23,13 +23,13 @@ const ChatContainer = () => {
 
   /* Fetch message */
   useEffect(() => {
-    getMessages(selectedUser._id);
+    getMessages(selectedUser?._id);
 
     subscribeToMessages();
 
     return () => unsubscribeFromMessages();
   }, [
-    selectedUser._id,
+    selectedUser?._id,
     getMessages,
     subscribeToMessages,
     unsubscribeFromMessages,
@@ -43,7 +43,6 @@ const ChatContainer = () => {
   }, [messages]);
 
   const groupedMessages = groupMessagesByFormattedDate(messages);
-  console.log("Messages: ", groupedMessages);
 
   if (isMessagesLoading) {
     return (

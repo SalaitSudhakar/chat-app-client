@@ -19,15 +19,14 @@ const Sidebar = () => {
     getUsers();
   }, [getUsers]);
 
-  console.log(searchChat)
   const filterFunction = () => {
     let filtered = showOnlineOnly
-      ? users.filter((user) => onlineUsers.includes(user._id))
+      ? users.filter((user) => onlineUsers.includes(user?._id))
       : users;
 
     if (searchChat.trim() !== "") {
       filtered = filtered.filter((user) =>
-        user.fullname.toLowerCase().includes(searchChat.toLowerCase())
+        user.fullname.toLowerCase().includes(searchChat?.toLowerCase())
       );
     }
 
@@ -129,9 +128,9 @@ const Sidebar = () => {
 
               {/* User info - only visible on larger screens */}
               <div className="text-left min-w-0">
-                <div className="font-medium truncate">{user.fullname}</div>
+                <div className="font-medium truncate">{user?.fullname}</div>
                 <div className="text-sm text-zinc-400">
-                  {onlineUsers.includes(user._id) ? "Online" : "Offline"}
+                  {onlineUsers.includes(user?._id) ? "Online" : "Offline"}
                 </div>
               </div>
             </button>

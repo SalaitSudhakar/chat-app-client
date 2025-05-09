@@ -57,6 +57,7 @@ A modern React-based frontend for a real-time chat application built with Vite, 
    ```
 
 4. Start the development server
+
    ```bash
    npm run dev
    # or

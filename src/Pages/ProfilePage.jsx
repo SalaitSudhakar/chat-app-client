@@ -18,16 +18,10 @@ const ProfilePage = () => {
 
     if (!file) return;
 
-    console.log("file: ", file);
     setSelectedImg(file);
 
     const formData = new FormData();
     formData.append("profilePic", file);
-
-    // Method 1: Using forEach
-    formData.forEach((value, key) => {
-      console.log(key, value);
-    });
 
     const success = await updateProfilePic(formData);
 
