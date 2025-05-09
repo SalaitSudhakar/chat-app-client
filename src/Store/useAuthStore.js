@@ -181,4 +181,4 @@ export const useAuthStore = create((set, get) => ({
       console.log("Socket disconnected manually");
     }
   },
-});
+}));
