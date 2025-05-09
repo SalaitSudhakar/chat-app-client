@@ -52,7 +52,7 @@ const LoginPage = () => {
   };
 
   return (
-    <section className="min-h-screen grid lg:grid-cols-2 pt-5">
+    <section className="min-h-screen grid lg:grid-cols-2">
       {/* left side */}
       <div className="flex flex-col justify-center items-center p-5 sm:p-12 pt-0">
         <div className="w-full max-w-md space-y-8">
@@ -166,10 +166,10 @@ const LoginPage = () => {
 
       {/* right side */}
 
-      <div className="hidden lg:flex flex-col justify-center bg-base-300 p-12">
+      <div className="hidden lg:flex flex-col justify-center bg-base-300 p-12 -mt-10">
         <img
           src={loginImage}
-          alt="Sign up illustration"
+          alt="login illustration"
           className="max-w-full mb-8 max-h-screen object-cover rounded-lg hover:rounded-2xl transition-all duration-300 border border-base-100  hover:shadow-lg hover:shadow-base-100"
         />
 
