@@ -10,9 +10,6 @@ console.log(`🔌 API configured with base URL: ${API_BASE_URL}`);
 export const api = axios.create({
   baseURL: API_BASE_URL,
   withCredentials: true,
-  headers: {
-    "Content-Type": "application/json"
-  }
 });
 
 // Add request/response interceptors for debugging
