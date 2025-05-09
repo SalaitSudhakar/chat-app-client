@@ -1,5 +1,5 @@
 import React from "react";
-import { ChevronDown, Check, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { THEMES } from "../constants/themes";
 import { themeIconMap } from "../constants/iconMap";
 import { useThemeStore } from "../Store/useThemeStore";

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../Store/useAuthStore";
 import {
   Eye,
   EyeOff,

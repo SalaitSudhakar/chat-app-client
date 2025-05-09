@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../Store/useAuthStore";
 import { isUpdateProfileFormValid } from "../utils/validateForm";
 import PasswordBar from "../Components/PasswordBar";
 import Modal from "../Components/Modal";

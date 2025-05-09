@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../Store/useAuthStore";
 import { formatMessageTime } from "../utils/formatMessageTime";
 import avatarImage from "../assets/avatar.png";
 import groupMessagesByFormattedDate from "../utils/groupMessagesByFormattedDate";

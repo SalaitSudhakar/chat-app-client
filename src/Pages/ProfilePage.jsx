@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useAuthStore } from "../store/useAuthStore";
+import { useAuthStore } from "../Store/useAuthStore";
 import { Camera, User, Mail, Edit } from "lucide-react";
 import avatar from "../assets/avatar.png";
 
