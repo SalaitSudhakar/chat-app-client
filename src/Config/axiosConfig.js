@@ -4,7 +4,7 @@ import axios from "axios";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 
 // Log the actual API URL when the app initializes for debugging
-const API_BASE_URL = BACKEND_URL ? `${BACKEND_URL}/api` : "/api";
+const API_BASE_URL = BACKEND_URL && `${BACKEND_URL}/api`;
 console.log(`🔌 API configured with base URL: ${API_BASE_URL}`);
 
 export const api = axios.create({
