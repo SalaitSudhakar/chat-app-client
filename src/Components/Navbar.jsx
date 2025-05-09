@@ -128,7 +128,7 @@ const Navbar = () => {
             </li>
           ))}
 
-          <div className="relative">
+          <div className="relative inline-block text-left">
             <div className="dropdown">
               <div
                 tabIndex={0}
@@ -145,7 +145,7 @@ const Navbar = () => {
               </div>
               <ul
                 tabIndex={0}
-                className="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl max-h-60 overflow-y-auto"
+                className="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl max-h-60 overflow-y-auto right-0 max-w-[calc(100vw-1rem)]"
               >
                 {themesWithIcons.map((themeOption) => {
                   const Icon = themeOption.icon;
