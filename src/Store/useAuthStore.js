@@ -20,7 +20,7 @@ export const useAuthStore = create((set, get) => ({
 
   checkAuth: async () => {
     try {
-      set({isCheckingAuth: true})
+      set({ isCheckingAuth: true });
       const response = await api.get("/auth/check-authenticated");
       set({ userData: response.data.userData });
       get().connectSocket();
@@ -46,8 +46,8 @@ export const useAuthStore = create((set, get) => ({
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-        error.message ||
-        "Something Went Wrong"
+          error.message ||
+          "Something Went Wrong"
       );
       return false;
     } finally {
@@ -74,8 +74,8 @@ export const useAuthStore = create((set, get) => ({
     } catch (error) {
       toast.error(
         error?.response?.data?.message ||
-        error.message ||
-        "Something Went Wrong. Try Again!"
+          error.message ||
+          "Something Went Wrong. Try Again!"
       );
       return false;
     } finally {
@@ -107,7 +107,8 @@ export const useAuthStore = create((set, get) => ({
       return true;
     } catch (error) {
       toast.error(
-        error?.response?.data?.message || "Error Updating Profile Pic. Try Again!"
+        error?.response?.data?.message ||
+          "Error Updating Profile Pic. Try Again!"
       );
       return false;
     } finally {
@@ -127,7 +128,8 @@ export const useAuthStore = create((set, get) => ({
       return true;
     } catch (error) {
       toast.error(
-        error?.response?.data?.message || "Error Updating Profile data. Try Again!"
+        error?.response?.data?.message ||
+          "Error Updating Profile data. Try Again!"
       );
       return false;
     } finally {
@@ -137,7 +139,9 @@ export const useAuthStore = create((set, get) => ({
 
   connectSocket: () => {
     const { userData } = get();
-    if (!userData || get().socket?.connected) return;
+    if (!userData || get().socket?.connected) {
+      return;
+    }
 
     try {
       const socket = io(BASE_URL, {
@@ -147,7 +151,6 @@ export const useAuthStore = create((set, get) => ({
         reconnectionDelay: 1000,
       });
 
-      // Event listeners
       socket.on("connect", () => {
         set({ socketConnected: true });
       });
@@ -164,10 +167,22 @@ export const useAuthStore = create((set, get) => ({
         set({ onlineUsers: userIds });
       });
 
+      socket.on("userJoined", (newUserId) => {
+        set((state) => {
+          if (state.onlineUsers.includes(newUserId)) return state;
+          return { onlineUsers: [...state.onlineUsers, newUserId] };
+        });
+      });
+
+      socket.on("userLeft", (userId) => {
+        set((state) => ({
+          onlineUsers: state.onlineUsers.filter((id) => id !== userId),
+        }));
+      });
+
       set({ socket });
     } catch (error) {
-
-      toast.error("Failed to connect to chat server");
+      toast.error(error?.message || "Failed to connect to chat server");
     }
   },
 
@@ -176,7 +191,6 @@ export const useAuthStore = create((set, get) => ({
     if (socket) {
       socket.disconnect();
       set({ socket: null, onlineUsers: [], socketConnected: false });
-      
     }
   },
 }));
