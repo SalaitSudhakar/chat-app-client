@@ -3,6 +3,7 @@ import { useAuthStore } from "../Store/useAuthStore";
 import {
   ChevronDown,
   CircleUserRound,
+  Home,
   LogIn,
   LogOut,
   MessageSquare,
@@ -41,6 +42,17 @@ const Navbar = () => {
     },
   ];
 
+  // Check if the current path is the home page
+  const shouldHideChevron = location.pathname !== "/"; // Hide on any path other than "/"
+  
+  if (shouldHideChevron) {
+    navLinks.push({
+      name: 'Home',
+      icon: <Home className={`${iconSize}`}/>,
+      link: '/'
+    })
+  }
+  
   if (!userData) {
     navLinks.push({
       name: "Login",
@@ -68,8 +80,6 @@ const Navbar = () => {
     });
   }
 
-  // Check if the current path is the home page
-  const shouldHideChevron = location.pathname !== "/"; // Hide on any path other than "/"
   
   return (
     <nav
