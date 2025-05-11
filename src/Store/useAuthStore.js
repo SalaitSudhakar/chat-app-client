@@ -6,9 +6,6 @@ import { io } from "socket.io-client";
 // Better handling of socket URL for different environments
 const BASE_URL = import.meta.env.VITE_BACKEND_URL || window.location.origin;
 
-// Log the Socket.IO connection URL for debugging
-console.log(`Socket.IO connecting to: ${BASE_URL}`);
-
 export const useAuthStore = create((set, get) => ({
   userData: null,
   isSigningUp: false,
@@ -19,10 +16,11 @@ export const useAuthStore = create((set, get) => ({
   socket: null,
   socketConnected: false,
 
-  isCheckingAuth: true,
+  isCheckingAuth: false,
 
   checkAuth: async () => {
     try {
+      set({isCheckingAuth: true})
       const response = await api.get("/auth/check-authenticated");
       set({ userData: response.data.userData });
       get().connectSocket();
@@ -178,7 +176,7 @@ export const useAuthStore = create((set, get) => ({
     if (socket) {
       socket.disconnect();
       set({ socket: null, onlineUsers: [], socketConnected: false });
-      console.log("Socket disconnected manually");
+      
     }
   },
 }));

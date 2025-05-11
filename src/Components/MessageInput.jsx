@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useChatStore } from "../Store/useChatStore";
-import { Image, Send, X } from "lucide-react";
+import { Image, Send, Smile, X } from "lucide-react";
 import toast from "react-hot-toast";
+import EmojiPicker from "emoji-picker-react";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
@@ -9,11 +10,38 @@ const MessageInput = () => {
   const [image, setImage] = useState(null);
   const fileInputRef = useRef(null);
   const { sendMessage } = useChatStore();
+  const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
+  const emojiPickerRef = useRef(null);
+  const [pickerSize, setPickerSize] = useState({ width: 310, height: 350 });
+
+  // Function to calculate emoji picker dimensions based on screen size
+  const calculatePickerSize = () => {
+    const width = window.innerWidth;
+    
+    if (width < 640) { // mobile
+      setPickerSize({ width: Math.min(280, width - 20), height: 300 });
+    } else if (width < 1024) { // tablet
+      setPickerSize({ width: 310, height: 350 });
+    } else { // desktop
+      setPickerSize({ width: 350, height: 400 });
+    }
+  };
+
+  // Calculate size on mount and window resize
+  useEffect(() => {
+    calculatePickerSize();
+    
+    const handleResize = () => {
+      calculatePickerSize();
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file || !file.type.startsWith("image/")) {
-      toast.error("Please select an image file");
       return;
     }
 
@@ -54,8 +82,46 @@ const MessageInput = () => {
     }
   };
 
+  /* Get Theme */
+  const theme = localStorage.getItem("chat-theme");
+
+  const getTheme = () => {
+    if (theme === "dark") return "dark";
+    if (theme === "light") return "light";
+    return "auto";
+  };
+
+  /* Handle emoji click */
+  const handleEmojiClick = (emojiObject) => {
+    setText((prev) => prev + emojiObject.emoji);
+    setIsEmojiPickerOpen(false);
+  };
+
+  /* close the emoji picker when clicked outside */
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        emojiPickerRef.current &&
+        isEmojiPickerOpen &&
+        !emojiPickerRef.current.contains(event.target)
+      ) {
+        setIsEmojiPickerOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isEmojiPickerOpen]);
+
+  // Adjust emoji picker position based on available space
+  const getEmojiPickerPosition = () => {
+    // Default position above the input
+    return `absolute left-0 bottom-full z-20 rounded-xl shadow-lg shadow-base-content/60  transition-all duration-300 ease-in-out transform
+                          ${isEmojiPickerOpen ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95'}`;
+  };
+
   return (
-    <div className="p-4 w-full">
+    <div className="p-2 sm:p-4 pb-1 w-full">
       {imagePreview && (
         <div className="mb-3 flex items-center gap-2">
           <div className="relative">
@@ -76,12 +142,12 @@ const MessageInput = () => {
         </div>
       )}
 
-      <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-        <div className="flex-1 flex gap-2">
+      <form onSubmit={handleSendMessage} className="w-full flex items-center gap-2">
+        <div className="relative flex-1 flex gap-2">
           <input
             type="text"
             aria-label="Text Message Input"
-            className="w-full input input-bordered rounded-lg input-sm sm:input-md"
+            className="w-full input input-bordered rounded-lg input-md sm:input-lg border-0 bg-base-content/20 py-1.5 sm:py-2"
             placeholder="Type a message..."
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -97,21 +163,53 @@ const MessageInput = () => {
 
           <button
             type="button"
-            className={`flex btn btn-circle
-                     ${imagePreview ? "text-emerald-500" : "text-zinc-400"}`}
+            className={`absolute right-2 cursor-pointer top-2 hover:bg-accent-content/30 p-0.5 sm:p-1 transition-all duration-200 flex z-10 rounded-full
+                     ${imagePreview ? "text-base-content/40" : "text-accent"}`}
             onClick={() => fileInputRef.current?.click()}
             aria-label="Upload Image"
           >
             <Image className="size-5 sm:size-6" />
           </button>
+
+          {/* Emoji picker icon*/}
+          <button
+            onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}
+            className="absolute right-8 sm:right-10 top-2 cursor-pointer text-accent hover:bg-accent-content/30 p-0.5 sm:p-1 z-10 transition-all duration-200  rounded-full"
+            aria-label="Open emoji picker"
+            type="button"
+          >
+            <Smile className="size-5 sm:size-6" />
+          </button>
+
+          {/* Emoji picker component */}
+          {isEmojiPickerOpen && (
+            <div
+              ref={emojiPickerRef}
+              className={getEmojiPickerPosition()}
+            >
+              <EmojiPicker
+                onEmojiClick={handleEmojiClick}
+                open={isEmojiPickerOpen}
+                theme={getTheme()}
+                emojiStyle="apple"
+                skinTonesDisabled={true}
+                searchDisabled={false}
+                lazyLoadEmojis={true}
+                previewConfig={{ showPreview: true }}
+                width={pickerSize.width}
+                height={pickerSize.height}
+              />
+            </div>
+          )}
         </div>
+
         <button
           type="submit"
-          className="btn btn-sm btn-circle"
+          className={`btn btn-sm btn-circle p-1 ${(text.trim() || imagePreview) && "text-accent-content bg-accent hover:bg-accent/70 hover:text-base-content/70"} transition-all duration-150`}
           disabled={!text.trim() && !imagePreview}
           aria-label="send message"
         >
-          <Send className="size-5 sm:size-6" />
+          <Send className="size-4 sm:size-5" />
         </button>
       </form>
     </div>
