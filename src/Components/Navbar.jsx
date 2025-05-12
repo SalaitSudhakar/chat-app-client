@@ -116,11 +116,11 @@ const Navbar = () => {
         </div>
 
         {/* Right side Links */}
-        <ul className="flex gap-1 sm:gap-2 lg:gap-4 items-center justify-end">
+        <ul className="flex gap-1 lg:gap-4 items-center justify-end">
           {navLinks.map((link, index) => (
             <li
               key={index}
-              className="flex items-center sm:gap-3 ml-1 sm:ml-2 hover:bg-base-300 border border-transparent hover:border-base-100 rounded-full transition-all duration-300"
+              className="flex items-center gap-2 lg:gap-3 ml-1 sm:ml-2 hover:bg-base-300 border border-transparent hover:border-base-100 rounded-full transition-all duration-300"
             >
               <Link
                 to={link.link}
