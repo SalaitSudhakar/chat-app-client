@@ -19,11 +19,11 @@ const MessageInput = () => {
     const width = window.innerWidth;
     
     if (width < 640) { // mobile
-      setPickerSize({ width: Math.min(280, width - 20), height: 300 });
+      setPickerSize({ width: Math.min(280, width - 20) });
     } else if (width < 1024) { // tablet
-      setPickerSize({ width: 310, height: 350 });
+      setPickerSize({ width: 310});
     } else { // desktop
-      setPickerSize({ width: 350, height: 400 });
+      setPickerSize({ width: 350 });
     }
   };
 
@@ -147,7 +147,7 @@ const MessageInput = () => {
           <input
             type="text"
             aria-label="Text Message Input"
-            className="w-full input input-bordered rounded-lg input-md sm:input-lg border-0 bg-base-content/20 py-1.5 sm:py-2"
+            className="w-full input input-bordered rounded-lg input-md sm:input-lg border-0 bg-base-content/10 py-1.5 sm:py-2"
             placeholder="Type a message..."
             value={text}
             onChange={(e) => setText(e.target.value)}
@@ -163,8 +163,8 @@ const MessageInput = () => {
 
           <button
             type="button"
-            className={`absolute right-2 cursor-pointer top-2 hover:bg-accent-content/30 p-0.5 sm:p-1 transition-all duration-200 flex z-10 rounded-full
-                     ${imagePreview ? "text-base-content/40" : "text-accent"}`}
+            className={`absolute right-2 cursor-pointer top-2 text-primary hover:bg-primary/20 p-0.5 sm:p-1 transition-all duration-200 flex z-10 rounded-full
+                     ${imagePreview ? "text-accent-content" : "text-accent"}`}
             onClick={() => fileInputRef.current?.click()}
             aria-label="Upload Image"
           >
@@ -174,7 +174,7 @@ const MessageInput = () => {
           {/* Emoji picker icon*/}
           <button
             onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}
-            className="absolute right-8 sm:right-10 top-2 cursor-pointer text-accent hover:bg-accent-content/30 p-0.5 sm:p-1 z-10 transition-all duration-200  rounded-full"
+            className="absolute right-8 sm:right-10 top-2 cursor-pointer text-primary hover:bg-primary/20 p-0.5 sm:p-1 z-10 transition-all duration-200  rounded-full"
             aria-label="Open emoji picker"
             type="button"
           >
@@ -197,7 +197,7 @@ const MessageInput = () => {
                 lazyLoadEmojis={true}
                 previewConfig={{ showPreview: true }}
                 width={pickerSize.width}
-                height={pickerSize.height}
+                height={"400px"}
               />
             </div>
           )}
@@ -205,7 +205,7 @@ const MessageInput = () => {
 
         <button
           type="submit"
-          className={`btn btn-sm btn-circle p-1 ${(text.trim() || imagePreview) && "text-accent-content bg-accent hover:bg-accent/70 hover:text-base-content/70"} transition-all duration-150`}
+          className={`btn btn-sm btn-circle btn-primary p-1 `}
           disabled={!text.trim() && !imagePreview}
           aria-label="send message"
         >

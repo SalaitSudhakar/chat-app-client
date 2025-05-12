@@ -129,7 +129,7 @@ const Sidebar = () => {
               {/* User info - only visible on larger screens */}
               <div className="text-left min-w-0">
                 <div className="font-medium truncate">{user?.fullname}</div>
-                <div className="text-sm text-zinc-400">
+                <div className="text-sm text-base-content/70">
                   {onlineUsers.includes(user?._id) ? "Online" : "Offline"}
                 </div>
               </div>
