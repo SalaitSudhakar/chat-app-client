@@ -50,7 +50,7 @@ const SignUpPage = () => {
       if (isSuccess) {
         setFormData({ fullname: "", email: "", password: "" });
         checkAuth();
-        navigate('/')
+        navigate("/");
       }
     }
   };
@@ -177,7 +177,7 @@ const SignUpPage = () => {
             >
               {isSigningUp ? (
                 <>
-                  <Loader2 className="size-5 animate-spin" />
+                  <span className="loading loading-spinner"></span>
                   Loading...
                 </>
               ) : (
