@@ -70,17 +70,17 @@ const ChatHeader = () => {
 
           {isMoreContentOpen && (
             <div
-              className={`absolute -left-20 top-5 z-50 bg-base-300 rounded-lg shadow-md shadow-base-content/60 min-w-[120px]
+              className={`absolute -left-25 top-10 z-50 bg-base-300 rounded-lg shadow-md shadow-base-content/60 min-w-[120px]
               ${
                 isMoreContentOpen
-                  ? "opacity-100 translate-x-0"
-                  : "opacity-0 translate-x-full"
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 -translate-y-2 pointer-events-none"
               }
-              transition-all duration-300`}
+              transition-all duration-300 ease-in-out`}
             >
               <button onClick={handleClearChat} className={btnStyle}>
                 <div className="flex items-center gap-1.5 ">
-                  <Trash2 className="text-base-content/60 size-5"/>
+                  <Trash2 className="text-base-content/60 size-5" />
                   <span>Clear Chat</span>
                 </div>
               </button>
@@ -89,7 +89,7 @@ const ChatHeader = () => {
                 className={btnStyle}
               >
                 <div className="flex items-center gap-1.5 ">
-                  <X className="text-base-content/60 size-5"/>
+                  <X className="text-base-content/60 size-5" />
                   <span>Close Chat</span>
                 </div>
               </button>
