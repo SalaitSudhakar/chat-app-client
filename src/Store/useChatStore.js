@@ -39,8 +39,8 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  setSelectedUser: (selectedUser) =>{
-    set({ selectedUser })
+  setSelectedUser: (selectedUser) => {
+    set({ selectedUser });
   },
 
   sendMessage: async (messageData) => {
@@ -57,6 +57,20 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  clearChat: async (id) => {
+    if (!get().messages || get().messages.length <= 0) {
+      toast.error("There Chat is already empty")
+    }
+    try {
+      const response = await api.patch(`/message/clear-chat/${id}`);
+
+      toast.success(response.data.message || "Chat Cleared");
+      set({ messages: []})
+    } catch (error) {
+      toast.error(error || "Error Clearing Chat");
+    }
+  },
+
   subscribeToMessages: () => {
     const { selectedUser } = get();
     if (!selectedUser) return;
@@ -64,7 +78,8 @@ export const useChatStore = create((set, get) => ({
     const socket = useAuthStore.getState()?.socket;
 
     socket.on("newMessage", (newMessage) => {
-      const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+      const isMessageSentFromSelectedUser =
+        newMessage.senderId === selectedUser._id;
       if (!isMessageSentFromSelectedUser) return;
 
       set({
@@ -77,5 +92,4 @@ export const useChatStore = create((set, get) => ({
     const socket = useAuthStore.getState()?.socket;
     socket.off("newMessage");
   },
-
 }));
