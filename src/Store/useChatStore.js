@@ -9,6 +9,7 @@ export const useChatStore = create((set, get) => ({
   selectedUser: null,
   isUserLoading: false,
   isMessageLoading: false,
+  isMessageSending: false,
 
   getUsers: async () => {
     set({ isUserLoading: true });
@@ -26,8 +27,7 @@ export const useChatStore = create((set, get) => ({
   },
 
   getMessages: async (id) => {
-    set({ isMessageLoading: true });
-
+    set({ isMessageLoading: true})
     try {
       const response = await api.get(`/message/${id}`);
       const { messages } = response.data;
@@ -35,7 +35,7 @@ export const useChatStore = create((set, get) => ({
     } catch (error) {
       toast.error(error?.response?.data?.message || "Error Fetching Messages");
     } finally {
-      set({ isMessageLoading: false });
+      set({ isMessageLoading: false})
     }
   },
 
@@ -45,6 +45,7 @@ export const useChatStore = create((set, get) => ({
 
   sendMessage: async (messageData) => {
     const { selectedUser, messages } = get();
+    set({ isMessageSending: true });
     try {
       const response = await api.post(
         `/message/send/${selectedUser._id}`,
@@ -52,20 +53,24 @@ export const useChatStore = create((set, get) => ({
       );
       const { newMessage } = response.data;
       set({ messages: [...messages, newMessage] });
+      return true;
     } catch (error) {
       toast.error(error?.response?.data?.message || "Error Sending Message");
+      return false;
+    } finally {
+      set({ isMessageSending: false });
     }
   },
 
   clearChat: async (id) => {
     if (!get().messages || get().messages.length <= 0) {
-      toast.error("There Chat is already empty")
+      toast.error("There Chat is already empty");
     }
     try {
       const response = await api.patch(`/message/clear-chat/${id}`);
 
       toast.success(response.data.message || "Chat Cleared");
-      set({ messages: []})
+      set({ messages: [] });
     } catch (error) {
       toast.error(error || "Error Clearing Chat");
     }

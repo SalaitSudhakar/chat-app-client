@@ -57,7 +57,7 @@ const Sidebar = () => {
           lg:static lg:translate-x-0 lg:w-72 lg:flex
         `}
       >
-        <div className="border-b border-base-300 w-full p-5">
+        <div className="border-b border-base-300 bg-primary/10 w-full p-5">
           <div className="flex items-center justify-between gap-2">
             <div className="flex gap-1">
               <Users className="size-6" />
@@ -101,7 +101,7 @@ const Sidebar = () => {
           </div>
         </div>
 
-        <div className="overflow-y-auto py-3">
+        <div className="overflow-y-auto py-3 bg-primary/5">
           {filteredUsers.map((user) => (
             <button
               key={user?._id}

@@ -9,7 +9,7 @@ const MessageInput = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [image, setImage] = useState(null);
   const fileInputRef = useRef(null);
-  const { sendMessage } = useChatStore();
+  const { sendMessage, isMessageSending } = useChatStore();
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const emojiPickerRef = useRef(null);
   const [pickerSize, setPickerSize] = useState({ width: 310, height: 350 });
@@ -17,12 +17,15 @@ const MessageInput = () => {
   // Function to calculate emoji picker dimensions based on screen size
   const calculatePickerSize = () => {
     const width = window.innerWidth;
-    
-    if (width < 640) { // mobile
+
+    if (width < 640) {
+      // mobile
       setPickerSize({ width: Math.min(280, width - 20) });
-    } else if (width < 1024) { // tablet
-      setPickerSize({ width: 310});
-    } else { // desktop
+    } else if (width < 1024) {
+      // tablet
+      setPickerSize({ width: 310 });
+    } else {
+      // desktop
       setPickerSize({ width: 350 });
     }
   };
@@ -30,13 +33,13 @@ const MessageInput = () => {
   // Calculate size on mount and window resize
   useEffect(() => {
     calculatePickerSize();
-    
+
     const handleResize = () => {
       calculatePickerSize();
     };
-    
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleImageChange = (e) => {
@@ -70,13 +73,15 @@ const MessageInput = () => {
       messageData.append("image", image);
     }
     try {
-      await sendMessage(messageData);
+      const success = await sendMessage(messageData);
 
-      // Clear form
-      setText("");
-      setImagePreview(null);
-      setImage(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
+      if (success) {
+        // Clear form
+        setText("");
+        setImagePreview(null);
+        setImage(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
+      }
     } catch (error) {
       toast.error("Failed to send message:", error);
     }
@@ -117,7 +122,11 @@ const MessageInput = () => {
   const getEmojiPickerPosition = () => {
     // Default position above the input
     return `absolute left-0 bottom-full z-20 rounded-xl shadow-lg shadow-base-content/60  transition-all duration-300 ease-in-out transform
-                          ${isEmojiPickerOpen ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-4 scale-95'}`;
+    ${
+      isEmojiPickerOpen
+      ? "opacity-100 translate-y-0 scale-100"
+      : "opacity-0 translate-y-4 scale-95"
+    }`;
   };
 
   return (
@@ -142,7 +151,10 @@ const MessageInput = () => {
         </div>
       )}
 
-      <form onSubmit={handleSendMessage} className="w-full flex items-center gap-2">
+      <form
+        onSubmit={handleSendMessage}
+        className="w-full flex items-center gap-2"
+      >
         <div className="relative flex-1 flex gap-2">
           <input
             type="text"
@@ -163,8 +175,11 @@ const MessageInput = () => {
 
           <button
             type="button"
+            disabled={isMessageSending}
             className={`absolute right-2 cursor-pointer top-2 text-primary hover:bg-primary/20 p-0.5 sm:p-1 transition-all duration-200 flex z-10 rounded-full
-                     ${imagePreview ? "text-accent-content" : "text-accent"}`}
+                     ${imagePreview ? "text-accent-content" : "text-accent"}
+                     ${isMessageSending && "text-"}
+                     `}
             onClick={() => fileInputRef.current?.click()}
             aria-label="Upload Image"
           >
@@ -173,8 +188,11 @@ const MessageInput = () => {
 
           {/* Emoji picker icon*/}
           <button
+            disabled={isMessageSending}
             onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}
-            className="absolute right-8 sm:right-10 top-2 cursor-pointer text-primary hover:bg-primary/20 p-0.5 sm:p-1 z-10 transition-all duration-200  rounded-full"
+            className={`absolute right-8 sm:right-10 top-2 cursor-pointer text-primary hover:bg-primary/20 p-0.5 sm:p-1 z-10 transition-all duration-200  rounded-full ${
+              isMessageSending && "text-gray-400"
+            }`}
             aria-label="Open emoji picker"
             type="button"
           >
@@ -183,10 +201,7 @@ const MessageInput = () => {
 
           {/* Emoji picker component */}
           {isEmojiPickerOpen && (
-            <div
-              ref={emojiPickerRef}
-              className={getEmojiPickerPosition()}
-            >
+            <div ref={emojiPickerRef} className={getEmojiPickerPosition()}>
               <EmojiPicker
                 onEmojiClick={handleEmojiClick}
                 open={isEmojiPickerOpen}
@@ -206,10 +221,14 @@ const MessageInput = () => {
         <button
           type="submit"
           className={`btn btn-sm btn-circle btn-primary p-1 `}
-          disabled={!text.trim() && !imagePreview}
+          disabled={(!text.trim() && !imagePreview) || isMessageSending}
           aria-label="send message"
         >
-          <Send className="size-4 sm:size-5" />
+          {isMessageSending ? (
+            <span className="loading loading-spinner"></span>
+          ) : (
+            <Send className="size-4 sm:size-5" />
+          )}
         </button>
       </form>
     </div>

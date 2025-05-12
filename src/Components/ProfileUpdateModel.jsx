@@ -3,7 +3,7 @@ import { useAuthStore } from "../Store/useAuthStore";
 import { isUpdateProfileFormValid } from "../utils/validateForm";
 import PasswordBar from "../Components/PasswordBar";
 import Modal from "../Components/Modal";
-import { User, Mail, Eye, EyeOff, Loader2, Lock } from "lucide-react";
+import { User, Mail, Eye, EyeOff, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 
 const ProfileUpdateModel = ({ isModalOpen, closeModal, setIsModalOpen }) => {
@@ -166,8 +166,8 @@ const ProfileUpdateModel = ({ isModalOpen, closeModal, setIsModalOpen }) => {
           >
             {isUpdatingProfileData ? (
               <>
-                <Loader2 className="size-5 animate-spin" />
-                Loading...
+                <span className="loading loading-spinner"></span>
+                loading...
               </>
             ) : (
               "Update Profile"
