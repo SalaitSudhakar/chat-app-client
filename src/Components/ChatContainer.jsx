@@ -128,7 +128,7 @@ const ChatContainer = () => {
       </div>
       )
     : (
-      <div className="h-screen flex items-center justify-center text-base-content/70 text-xl capitalize">start the converstaion..</div>
+      <div className="h-screen flex items-center justify-center text-base-content/70 text-xl capitalize">start the conversation..</div>
     )}
 
       <MessageInput />
