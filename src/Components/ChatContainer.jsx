@@ -131,7 +131,7 @@ const ChatContainer = () => {
               {msgs.map((message) => (
                 <div
                   key={message._id}
-                  className={`chat group-hover:bg-primary/5 ${
+                  className={`chat ${
                     message.senderId === userData._id
                       ? "chat-end"
                       : "chat-start"
@@ -160,7 +160,7 @@ const ChatContainer = () => {
                   </div>
 
                   {/* Message - Image */}
-                  <div className="chat-bubble flex flex-col relative group group-hover:bg-base-300/10 transiton-all duration-200">
+                  <div className="chat-bubble flex flex-col relative group hover:bg-base-300/50 transiton-all duration-100">
                     {message.image && (
                       <div>
                         <img
@@ -177,7 +177,7 @@ const ChatContainer = () => {
                       <div
                         className={`${
                           message.image
-                            ? "absolute -bottom-1 left-0 bg-base-300/90 w-full p-1 text-center"
+                            ? "absolute -bottom-1 left-0 bg-base-300/90 w-full p-1 text-center group-hover:bg-base-300/80 group-hover:text-white"
                             : ""
                         }`}
                       >
