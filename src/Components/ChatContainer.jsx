@@ -20,6 +20,7 @@ const ChatContainer = () => {
     selectedUser,
     subscribeToMessages,
     unsubscribeFromMessages,
+    deleteMessageForMe,
   } = useChatStore();
 
   const { userData } = useAuthStore();
@@ -98,6 +99,22 @@ const ChatContainer = () => {
     }
 
     setHoveredMessage((prev) => ({ ...prev, messageId: id }));
+  };
+
+  const handleDeleteForMe = async (event, id) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+
+    if (id) {
+      await deleteMessageForMe(id);
+    }
+
+    // Delay closing the menu
+    setTimeout(() => {
+      setHoveredMessage({});
+    }, 500);
   };
 
   if (isMessagesLoading) {
@@ -185,7 +202,6 @@ const ChatContainer = () => {
 
                     {/* Copy-delete 3 dot button */}
                     <div
-                      ref={moreContentRef}
                       className={`absolute top-0 ${
                         message.senderId === userData._id
                           ? "-left-15"
@@ -207,6 +223,7 @@ const ChatContainer = () => {
                       {/* Copy - Delete buttons */}
                       {hoveredMessage?.messageId === message._id && (
                         <div
+                          ref={moreContentRef}
                           className={`absolute top-0 ${
                             message.senderId === userData._id
                               ? "-left-40"
@@ -225,7 +242,12 @@ const ChatContainer = () => {
                             </button>
                           )}
 
-                          <button className="flex gap-1 p-1.5 px-2.5 hover:bg-base-100 rounded-b-lg cursor-pointer">
+                          <button
+                            onClick={(event) =>
+                              handleDeleteForMe(event, message._id)
+                            }
+                            className="flex gap-1 p-1.5 px-2.5 hover:bg-base-100 rounded-b-lg cursor-pointer"
+                          >
                             <Trash2 size={18} /> Delete For Me
                           </button>
                         </div>

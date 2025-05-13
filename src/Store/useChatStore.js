@@ -27,7 +27,7 @@ export const useChatStore = create((set, get) => ({
   },
 
   getMessages: async (id) => {
-    set({ isMessageLoading: true})
+    set({ isMessageLoading: true });
     try {
       const response = await api.get(`/message/${id}`);
       const { messages } = response.data;
@@ -35,7 +35,7 @@ export const useChatStore = create((set, get) => ({
     } catch (error) {
       toast.error(error?.response?.data?.message || "Error Fetching Messages");
     } finally {
-      set({ isMessageLoading: false})
+      set({ isMessageLoading: false });
     }
   },
 
@@ -76,8 +76,20 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
+  deleteMessageForMe: async (messageId) => {
+    try {
+      const response = await api.patch(`/message/delete-for-me/${messageId}`);
+
+      toast.success(response.data.message || "Message Delete Successfully");
+      set({ messages: get().messages.filter((message) => message._id !== messageId) });
+    } catch (error) {
+      toast.error(error || "Error Deleting the message");
+    }
+  },
+
   subscribeToMessages: () => {
     const { selectedUser } = get();
+
     if (!selectedUser) return;
 
     const socket = useAuthStore.getState()?.socket;
