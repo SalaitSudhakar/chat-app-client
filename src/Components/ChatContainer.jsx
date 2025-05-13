@@ -9,8 +9,8 @@ import avatarImage from "../assets/avatar.png";
 import groupMessagesByFormattedDate from "../utils/groupMessagesByFormattedDate";
 import Modal from "./Modal";
 import EmojiPicker from "emoji-picker-react";
-import { Copy, Ellipsis, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
+import CopyDeleteButtons from "./CopyDeleteButtons";
 
 const ChatContainer = () => {
   const {
@@ -29,7 +29,6 @@ const ChatContainer = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(false);
   const [hoveredMessage, setHoveredMessage] = useState({});
-  const moreContentRef = useRef();
 
   useEffect(() => {
     getMessages(selectedUser?._id);
@@ -49,22 +48,6 @@ const ChatContainer = () => {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
-
-  useEffect(() => {
-    const handleCloseMoreContentDiv = (e) => {
-      if (
-        moreContentRef.current &&
-        !moreContentRef.current.contains(e.target)
-      ) {
-        setHoveredMessage({});
-      }
-    };
-
-    document.addEventListener("mousedown", handleCloseMoreContentDiv);
-
-    return () =>
-      document.removeEventListener("mousedown", handleCloseMoreContentDiv);
-  }, []);
 
   const groupedMessages = groupMessagesByFormattedDate(messages);
 
@@ -92,13 +75,15 @@ const ChatContainer = () => {
     }
   };
 
-  const handleMoreBtnClick = (event, id) => {
+  const onToggle = (event, id) => {
     if (event) {
       event.preventDefault();
       event.stopPropagation();
     }
 
-    setHoveredMessage((prev) => ({ ...prev, messageId: id }));
+    setHoveredMessage((prev) =>
+      prev.messageId === id ? {} : { messageId: id }
+    );
   };
 
   const handleDeleteForMe = async (event, id) => {
@@ -201,58 +186,14 @@ const ChatContainer = () => {
                     )}
 
                     {/* Copy-delete 3 dot button */}
-                    <div
-                      className={`absolute top-0 ${
-                        message.senderId === userData._id
-                          ? "-left-15"
-                          : "-right-15"
-                      } p-1 rounded cursor-pointer ${
-                        hoveredMessage?.messageId === message._id
-                          ? "opacity-100"
-                          : "opacity-0 group-hover:opacity-100"
-                      } transition`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {/* 3 dot button */}
-                      <Ellipsis
-                        onClick={(event) =>
-                          handleMoreBtnClick(event, message._id)
-                        }
-                      />
-
-                      {/* Copy - Delete buttons */}
-                      {hoveredMessage?.messageId === message._id && (
-                        <div
-                          ref={moreContentRef}
-                          className={`absolute top-0 ${
-                            message.senderId === userData._id
-                              ? "-left-40"
-                              : "-right-40"
-                          } bg-base-300 flex flex-col z-10 min-w-[120px] rounded-lg shadow-lg shadow-base-content`}
-                        >
-                          {/* Copy button show only for text */}
-                          {message.text && (
-                            <button
-                              onClick={(event) =>
-                                handleCopyMessage(message.text, event)
-                              }
-                              className="flex gap-1 p-1.5 px-2.5 hover:bg-base-100 rounded-t-lg cursor-pointer"
-                            >
-                              <Copy size={18} /> Copy Text
-                            </button>
-                          )}
-
-                          <button
-                            onClick={(event) =>
-                              handleDeleteForMe(event, message._id)
-                            }
-                            className="flex gap-1 p-1.5 px-2.5 hover:bg-base-100 rounded-b-lg cursor-pointer"
-                          >
-                            <Trash2 size={18} /> Delete For Me
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    <CopyDeleteButtons
+                      message={message}
+                      isVisible={hoveredMessage?.messageId === message._id}
+                      onCopy={handleCopyMessage}
+                      onDelete={handleDeleteForMe}
+                      onToggle={onToggle}
+                      isSender={message.senderId === userData._id}
+                    />
                   </div>
                 </div>
               ))}
