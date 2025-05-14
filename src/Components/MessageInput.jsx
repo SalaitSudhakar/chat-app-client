@@ -104,7 +104,11 @@ const MessageInput = () => {
   };
 
   /* close the emoji picker when clicked outside */
-  useClickOutside(emojiPickerRef, () => setIsEmojiPickerOpen(false), isEmojiPickerOpen)
+  useClickOutside(
+    emojiPickerRef,
+    () => setIsEmojiPickerOpen(false),
+    isEmojiPickerOpen
+  );
 
   // Adjust emoji picker position based on available space
   const getEmojiPickerPosition = () => {
@@ -112,10 +116,18 @@ const MessageInput = () => {
     return `absolute left-0 bottom-full z-20 rounded-xl shadow-lg shadow-base-content/60  transition-all duration-300 ease-in-out transform
     ${
       isEmojiPickerOpen
-      ? "opacity-100 translate-y-0 scale-100"
-      : "opacity-0 translate-y-4 scale-95"
+        ? "opacity-100 translate-y-0 scale-100"
+        : "opacity-0 translate-y-4 scale-95"
     }`;
   };
+
+  const textareaRef = useRef();
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.selectionStart = textareaRef.current.value.length;
+      textareaRef.current.selectionEnd = textareaRef.current.value.length;
+    }
+  }, [text]);
 
   return (
     <div className="p-2 sm:p-4 pb-3 pt-0 w-full">
@@ -144,14 +156,22 @@ const MessageInput = () => {
         className="w-full flex items-center gap-2"
       >
         <div className="relative flex-1 flex gap-2">
-          <input
-            type="text"
+          <textarea
             aria-label="Text Message Input"
-            className="w-full input input-bordered rounded-lg input-md sm:input-lg border-0 bg-base-content/10 py-1.5 sm:py-2"
+            className="w-full input input-bordered rounded-lg input-md sm:input-lg border-0 bg-base-content/10 py-1.5 sm:py-2 resize-none overflow-hidden"
             placeholder="Type a message..."
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            ref={textareaRef}
+            onChange={(e) => {
+              setText(e.target.value);
+
+              const el = e.target;
+              el.style.height = "auto"; // Reset the height
+              el.style.height = el.scrollHeight + "px"; // Adjust to content
+            }}
+            rows={1}
           />
+
           <input
             type="file"
             accept="image/*"
