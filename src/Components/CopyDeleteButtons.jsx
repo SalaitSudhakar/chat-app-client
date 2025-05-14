@@ -34,13 +34,13 @@ const CopyDeleteButtons = ({
       onClick={(e) => e.stopPropagation()}
     >
       {/* 3-dot Button */}
-      <Ellipsis onClick={(e) => onToggle(e, message._id)} />
+      <Ellipsis size={30} onClick={(e) => onToggle(e, message._id)} className="p-1.5 hover:bg-base-300 rounded-full"/>
 
       {/* Copy / Delete Menu */}
       {isVisible && (
         <div
           ref={moreContentRef}
-          className={`absolute top-0 ${
+          className={`absolute top-1 ${
             isSender ? "-left-40" : "-right-40"
           } bg-base-300 flex flex-col z-10 min-w-[120px] rounded-lg shadow-lg shadow-base-content`}
         >

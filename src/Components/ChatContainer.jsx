@@ -8,7 +8,6 @@ import { formatMessageTime } from "../utils/formatMessageTime";
 import avatarImage from "../assets/avatar.png";
 import groupMessagesByFormattedDate from "../utils/groupMessagesByFormattedDate";
 import Modal from "./Modal";
-import EmojiPicker from "emoji-picker-react";
 import toast from "react-hot-toast";
 import CopyDeleteButtons from "./CopyDeleteButtons";
 
@@ -184,6 +183,17 @@ const ChatContainer = () => {
                         <p>{message.text}</p>
                       </div>
                     )}
+
+                    {/* Message Emoji Reaction */}
+                    {message?.emojiReactions &&
+                      message.emojiReactions.map((index, emoji) => (
+                        <div
+                          key={emoji.userId}
+                          className=" p-2 size-8 rounded-full bg-base-200 self-justify-end"
+                        >
+                          {emoji.emoji}
+                        </div>
+                      ))}
 
                     {/* Copy-delete 3 dot button */}
                     <CopyDeleteButtons

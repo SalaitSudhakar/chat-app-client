@@ -81,12 +81,39 @@ export const useChatStore = create((set, get) => ({
       const response = await api.patch(`/message/delete-for-me/${messageId}`);
 
       toast.success(response.data.message || "Message Delete Successfully");
-      set({ messages: get().messages.filter((message) => message._id !== messageId) });
+      set({
+        messages: get().messages.filter((message) => message._id !== messageId),
+      });
     } catch (error) {
       toast.error(error || "Error Deleting the message");
     }
   },
 
+  addReaction: async (messageId) => {
+    try {
+      const response = await api.patch(`/message/add-reaction/${messageId}`);
+
+      const { message, messageData } = response.data;
+
+      toast.success(message || "Reaction added successfully");
+      set({ messages: messageData });
+    } catch (error) {
+      toast.error(error || "Error Reacting to the message");
+    }
+  },
+
+  removeReaction: async (messageId) => {
+    try {
+      const response = await api.delete(`/message/delete-reaction/${messageId}`);
+
+      const { message, messageData } = response.data;
+
+      toast.success(message || "Reaction Deleted successfully");
+      set({ messages: messageData });
+    } catch (error) {
+      toast.error(error || "Error Reacting to the message");
+    }
+  },
   subscribeToMessages: () => {
     const { selectedUser } = get();
 
