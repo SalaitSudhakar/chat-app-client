@@ -2,7 +2,8 @@ import { EllipsisVertical, Trash2, X } from "lucide-react";
 import { useAuthStore } from "../Store/useAuthStore";
 import { useChatStore } from "../Store/useChatStore";
 import avatarImage from "../assets/avatar.png";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
+import useClickOutside from './Hooks/useClickOutside';
 
 const ChatHeader = () => {
   const { selectedUser, setSelectedUser, clearChat } = useChatStore();
@@ -10,22 +11,10 @@ const ChatHeader = () => {
 
   const [isMoreContentOpen, setIsMoreContentOpen] = useState(false);
 
-  const moreContentRef = useRef();
+  const moreContentDropdownRef = useRef();
 
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (
-        moreContentRef.current &&
-        !moreContentRef.current.contains(e.target)
-      ) {
-        setIsMoreContentOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  /* close click outside hook */
+  useClickOutside(moreContentDropdownRef, () => setIsMoreContentOpen(false), isMoreContentOpen)
 
   const btnStyle =
     "cursor-pointer px-2 py-1.5 w-full hover:bg-base-content/10 transition-all duration-150";
@@ -60,7 +49,7 @@ const ChatHeader = () => {
           </div>
         </div>
 
-        <div ref={moreContentRef} className="relative">
+        <div ref={moreContentDropdownRef} className="relative">
           <button
             onClick={() => setIsMoreContentOpen(true)}
             className="p-1 hover:bg-base-content/10 rounded-full transition-all duration-150 cursor-pointer"

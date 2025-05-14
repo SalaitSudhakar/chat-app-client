@@ -3,6 +3,7 @@ import { useChatStore } from "../Store/useChatStore";
 import { Image, Send, Smile, X } from "lucide-react";
 import toast from "react-hot-toast";
 import EmojiPicker from "emoji-picker-react";
+import useClickOutside from "./Hooks/useClickOutside";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
@@ -103,20 +104,7 @@ const MessageInput = () => {
   };
 
   /* close the emoji picker when clicked outside */
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        emojiPickerRef.current &&
-        isEmojiPickerOpen &&
-        !emojiPickerRef.current.contains(event.target)
-      ) {
-        setIsEmojiPickerOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [isEmojiPickerOpen]);
+  useClickOutside(emojiPickerRef, () => setIsEmojiPickerOpen(false), isEmojiPickerOpen)
 
   // Adjust emoji picker position based on available space
   const getEmojiPickerPosition = () => {

@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import { Copy, Ellipsis, Trash2 } from "lucide-react";
+import useClickOutside from "./Hooks/useClickOutside";
 
 const CopyDeleteButtons = ({
   message,
@@ -9,21 +10,11 @@ const CopyDeleteButtons = ({
   onToggle,
   isSender,
 }) => {
-  const moreContentRef = useRef();
+  const copyDeleteDropdownRef = useRef();
 
   // Close the menu if clicked outside
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (
-        moreContentRef.current &&
-        !moreContentRef.current.contains(e.target)
-      ) {
-        onToggle(null);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [onToggle]);
+  useClickOutside(copyDeleteDropdownRef, onToggle, isVisible)
+
   return (
     <div
       className={`absolute top-0 ${
@@ -39,7 +30,7 @@ const CopyDeleteButtons = ({
       {/* Copy / Delete Menu */}
       {isVisible && (
         <div
-          ref={moreContentRef}
+          ref={copyDeleteDropdownRef}
           className={`absolute top-1 ${
             isSender ? "-left-40" : "-right-40"
           } bg-base-300 flex flex-col z-10 min-w-[120px] rounded-lg shadow-lg shadow-base-content`}
