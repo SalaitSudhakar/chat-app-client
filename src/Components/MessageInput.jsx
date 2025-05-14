@@ -162,6 +162,7 @@ const MessageInput = () => {
             placeholder="Type a message..."
             value={text}
             ref={textareaRef}
+            rows={1}
             onChange={(e) => {
               setText(e.target.value);
 
@@ -169,7 +170,13 @@ const MessageInput = () => {
               el.style.height = "auto"; // Reset the height
               el.style.height = el.scrollHeight + "px"; // Adjust to content
             }}
-            rows={1}
+            onKeyDown={(e) => {
+              if (e.key === "Enter"  && !e.shiftKey) {
+                e.preventDefault(); // prevent newline
+                handleSendMessage(e); // send message
+              }
+              // Ctrl+shift inserts newline (no need to handle it explicitly)
+            }}
           />
 
           <input
