@@ -157,7 +157,7 @@ const Navbar = () => {
                 tabIndex={0}
                 className="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl max-h-60 overflow-y-auto right-0 max-w-[calc(100vw-1rem)]"
               >
-                {themesWithIcons.map((themeOption) => {
+                {themesWithIcons.sort().map((themeOption) => {
                   const Icon = themeOption.icon;
                   return (
                     <li
