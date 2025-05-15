@@ -1,5 +1,5 @@
 import { useChatStore } from "../Store/useChatStore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Fragment } from "react";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
@@ -8,8 +8,10 @@ import { formatMessageTime } from "../utils/formatMessageTime";
 import avatarImage from "../assets/avatar.png";
 import groupMessagesByFormattedDate from "../utils/groupMessagesByFormattedDate";
 import Modal from "./Modal";
-import toast from "react-hot-toast";
 import CopyDeleteButtons from "./CopyDeleteButtons";
+import MessageReaction from "./MessageReaction";
+import "../App.css";
+import EmojiReactionDisplay from "./EmojiReactionDisplay";
 
 const ChatContainer = () => {
   const {
@@ -19,15 +21,17 @@ const ChatContainer = () => {
     selectedUser,
     subscribeToMessages,
     unsubscribeFromMessages,
-    deleteMessageForMe,
   } = useChatStore();
 
+  const [emojiReactionClicked, setEmojiReactionClicked] = useState(null);
+  const [copyDeleteButtonClicked, setCopyDeleteButtonClicked] = useState(null);
+
   const { userData } = useAuthStore();
+
   const messageEndRef = useRef(null);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(false);
-  const [hoveredMessage, setHoveredMessage] = useState({});
 
   useEffect(() => {
     getMessages(selectedUser?._id);
@@ -48,57 +52,14 @@ const ChatContainer = () => {
     }
   }, [messages]);
 
-  const groupedMessages = groupMessagesByFormattedDate(messages);
+  let groupedMessages = {};
+  if (Array.isArray(messages)) {
+    groupedMessages = groupMessagesByFormattedDate(messages);
+  }
 
   const handlePreviewImage = (image) => {
     setSelectedImage(image);
     setPreviewImage(true);
-  };
-
-  const handleCopyMessage = async (text, event) => {
-    console.log("Message is Copying");
-
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.success("Message Copied");
-
-      setTimeout(() => {
-        setHoveredMessage({});
-      }, 500);
-    } catch (error) {
-      toast.error("Failed to copy text: ", error);
-    }
-  };
-
-  const onToggle = (event, id) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    setHoveredMessage((prev) =>
-      prev.messageId === id ? {} : { messageId: id }
-    );
-  };
-
-  const handleDeleteForMe = async (event, id) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    if (id) {
-      await deleteMessageForMe(id);
-    }
-
-    // Delay closing the menu
-    setTimeout(() => {
-      setHoveredMessage({});
-    }, 500);
   };
 
   if (isMessagesLoading) {
@@ -116,7 +77,7 @@ const ChatContainer = () => {
       {/* Chat Header */}
       <ChatHeader />
 
-      {/* Chat Container */}
+      {/* Chat Messages */}
       {messages.length > 0 ? (
         <div className="flex-1 flex-col flex-grow min-h-[50vh] overflow-y-auto p-1 sm:p-4 pb-0 relative">
           {Object.entries(groupedMessages).map(([date, msgs]) => (
@@ -139,7 +100,7 @@ const ChatContainer = () => {
                 >
                   {/* Profile image */}
                   <div className="chat-image avatar">
-                    <div className="size-10 rounded-full border">
+                    <div className="size-8 sm:size-10 rounded-full border">
                       <img
                         src={
                           message.senderId === userData._id
@@ -158,20 +119,21 @@ const ChatContainer = () => {
                     </time>
                   </div>
 
-                  {/* Message - Image */}
-                  <div className="chat-bubble flex flex-col relative group hover:bg-base-300/50 transiton-all duration-100">
+                  {/* Message Content */}
+                  <div className="chat-bubble flex flex-col relative group hover:bg-base-300/50 max-w-[150px] sm:max-w-1/2 transition-all duration-100">
+                    {/* Message Image */}
                     {message.image && (
                       <div>
                         <img
                           src={message.image}
                           alt="Attachment"
                           onClick={() => handlePreviewImage(message.image)}
-                          className="max-w-[100px] sm:max-w-[150px] rounded-md mb-2"
+                          className="max-w-[100px] sm:max-w-[150px] rounded-md mb-2 cursor-pointer"
                         />
                       </div>
                     )}
 
-                    {/* Message - Text */}
+                    {/* Message Text */}
                     {message.text && (
                       <div
                         className={`${
@@ -184,27 +146,24 @@ const ChatContainer = () => {
                       </div>
                     )}
 
-                    {/* Message Emoji Reaction */}
-                    {message?.emojiReactions &&
-                      message.emojiReactions.map((index, emoji) => (
-                        <div
-                          key={emoji.userId}
-                          className=" p-2 size-8 rounded-full bg-base-200 self-justify-end"
-                        >
-                          {emoji.emoji}
-                        </div>
-                      ))}
-
-                    {/* Copy-delete 3 dot button */}
+                    {/* Copy-delete Buttons */}
                     <CopyDeleteButtons
                       message={message}
-                      isVisible={hoveredMessage?.messageId === message._id}
-                      onCopy={handleCopyMessage}
-                      onDelete={handleDeleteForMe}
-                      onToggle={onToggle}
-                      isSender={message.senderId === userData._id}
+                      copyDeleteButtonClicked={copyDeleteButtonClicked}
+                      setCopyDeleteButtonClicked={setCopyDeleteButtonClicked}
+                      emojiReactionClicked={emojiReactionClicked}
+                    />
+
+                    {/* Emoji Reaction */}
+                    <MessageReaction
+                      message={message}
+                      emojiReactionClicked={emojiReactionClicked}
+                      setEmojiReactionClicked={setEmojiReactionClicked}
+                      CopyDeleteDropdown={copyDeleteButtonClicked}
                     />
                   </div>
+
+                  <EmojiReactionDisplay message={message} />
                 </div>
               ))}
             </div>
@@ -216,6 +175,7 @@ const ChatContainer = () => {
         </div>
       )}
 
+      {/* Message Input */}
       <MessageInput />
 
       {/* Image Preview Modal */}

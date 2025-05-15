@@ -85,33 +85,44 @@ export const useChatStore = create((set, get) => ({
         messages: get().messages.filter((message) => message._id !== messageId),
       });
     } catch (error) {
-      toast.error(error || "Error Deleting the message");
+      toast.error(
+        error?.response?.data?.message || "Error Deleting the message"
+      );
     }
   },
 
-  addReaction: async (messageId) => {
+  addReaction: async (messageId, emoji) => {
+    console.log("MessageId: ", messageId, "Emoji: ", emoji);
     try {
-      const response = await api.patch(`/message/add-reaction/${messageId}`);
+      const response = await api.patch(`/message/add-reaction/${messageId}`, {
+        emoji,
+      });
 
       const { message, messageData } = response.data;
 
       toast.success(message || "Reaction added successfully");
       set({ messages: messageData });
     } catch (error) {
-      toast.error(error || "Error Reacting to the message");
+      toast.error(
+        error?.response?.data?.message || "Error Reacting to the message"
+      );
     }
   },
 
   removeReaction: async (messageId) => {
     try {
-      const response = await api.delete(`/message/delete-reaction/${messageId}`);
+      const response = await api.delete(
+        `/message/delete-reaction/${messageId}`
+      );
 
       const { message, messageData } = response.data;
 
       toast.success(message || "Reaction Deleted successfully");
       set({ messages: messageData });
     } catch (error) {
-      toast.error(error || "Error Reacting to the message");
+      toast.error(
+        error?.response?.data?.message || "Error Reacting to the message"
+      );
     }
   },
   subscribeToMessages: () => {

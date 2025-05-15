@@ -4,6 +4,7 @@ import { Image, Send, Smile, X } from "lucide-react";
 import toast from "react-hot-toast";
 import EmojiPicker from "emoji-picker-react";
 import useClickOutside from "./Hooks/useClickOutside";
+import useEmojiPickerSize from "./Hooks/useEmojiPickerSize";
 
 const MessageInput = () => {
   const [text, setText] = useState("");
@@ -13,35 +14,9 @@ const MessageInput = () => {
   const { sendMessage, isMessageSending } = useChatStore();
   const [isEmojiPickerOpen, setIsEmojiPickerOpen] = useState(false);
   const emojiPickerRef = useRef(null);
-  const [pickerSize, setPickerSize] = useState({ width: 310, height: 350 });
+  const emojiToggleRef = useRef(null);
 
-  // Function to calculate emoji picker dimensions based on screen size
-  const calculatePickerSize = () => {
-    const width = window.innerWidth;
-
-    if (width < 640) {
-      // mobile
-      setPickerSize({ width: Math.min(280, width - 20) });
-    } else if (width < 1024) {
-      // tablet
-      setPickerSize({ width: 310 });
-    } else {
-      // desktop
-      setPickerSize({ width: 350 });
-    }
-  };
-
-  // Calculate size on mount and window resize
-  useEffect(() => {
-    calculatePickerSize();
-
-    const handleResize = () => {
-      calculatePickerSize();
-    };
-
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  const { width: emojiPickerWidth } = useEmojiPickerSize();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -105,15 +80,15 @@ const MessageInput = () => {
 
   /* close the emoji picker when clicked outside */
   useClickOutside(
-    emojiPickerRef,
+    [emojiPickerRef, emojiToggleRef],
     () => setIsEmojiPickerOpen(false),
     isEmojiPickerOpen
   );
 
   // Adjust emoji picker position based on available space
-  const getEmojiPickerPosition = () => {
+    const getEmojiPickerPosition = () => {
     // Default position above the input
-    return `absolute left-0 bottom-full z-20 rounded-xl shadow-lg shadow-base-content/60  transition-all duration-300 ease-in-out transform
+    return `absolute left-0 bottom-full z-50 rounded-xl shadow-lg shadow-base-content/60 
     ${
       isEmojiPickerOpen
         ? "opacity-100 translate-y-0 scale-100"
@@ -132,17 +107,17 @@ const MessageInput = () => {
   return (
     <div className="p-2 sm:p-4 pb-3 pt-0 w-full">
       {imagePreview && (
-        <div className="mb-3 flex items-center gap-2">
+        <div className="mb-3 flex items-center">
           <div className="relative">
             <img
               src={imagePreview}
               alt="Preview"
-              className="w-20 h-20 object-cover rounded-lg border border-zinc-700"
+              className="w-20 h-20 object-cover rounded-lg border border-base-content"
             />
             <button
               onClick={removeImage}
               className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-base-300
-              flex items-center justify-center"
+              flex items-center justify-center hover:bg-base-300/90 hover:text-primary/80"
               type="button"
             >
               <X className="size-3" />
@@ -171,7 +146,7 @@ const MessageInput = () => {
               el.style.height = el.scrollHeight + "px"; // Adjust to content
             }}
             onKeyDown={(e) => {
-              if (e.key === "Enter"  && !e.shiftKey) {
+              if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault(); // prevent newline
                 handleSendMessage(e); // send message
               }
@@ -203,6 +178,7 @@ const MessageInput = () => {
 
           {/* Emoji picker icon*/}
           <button
+            ref={emojiToggleRef}
             disabled={isMessageSending}
             onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}
             className={`absolute right-8 sm:right-10 top-2 cursor-pointer text-primary hover:bg-primary/20 p-0.5 sm:p-1 z-10 transition-all duration-200  rounded-full ${
@@ -216,17 +192,20 @@ const MessageInput = () => {
 
           {/* Emoji picker component */}
           {isEmojiPickerOpen && (
-            <div ref={emojiPickerRef} className={getEmojiPickerPosition()}>
+            <div
+              ref={emojiPickerRef}
+              className={getEmojiPickerPosition()}
+              style={{ width: emojiPickerWidth }}
+            >
               <EmojiPicker
                 onEmojiClick={handleEmojiClick}
-                open={isEmojiPickerOpen}
                 theme={getTheme()}
                 emojiStyle="apple"
                 skinTonesDisabled={true}
                 searchDisabled={false}
                 lazyLoadEmojis={true}
                 previewConfig={{ showPreview: true }}
-                width={pickerSize.width}
+                width={emojiPickerWidth}
                 height={"400px"}
               />
             </div>
