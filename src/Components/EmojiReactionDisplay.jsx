@@ -1,23 +1,21 @@
 import React, { useState, useRef, Fragment } from "react";
 import { useChatStore } from "../Store/useChatStore";
-import useClickOutside from "./Hooks/useClickOutside"; // Assuming this is your custom hook
+import useClickOutside from "./Hooks/useClickOutside";
 import { useAuthStore } from "../Store/useAuthStore";
 import { Trash2, User } from "lucide-react";
 
 const EmojiReactionDisplay = ({ message }) => {
-  // State to track which reaction popup is shown and its position on screen
   const [showReactionContent, setShowReactionContent] = useState(null);
   const [isReactionContentVisible, setIsReactionContentVisible] =
     useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
 
-  const { removeReaction, getMessages, selectedUser, isRemovingReaction } = useChatStore();
+  const { removeReaction, getMessages, selectedUser, isRemovingReaction } =
+    useChatStore();
   const { userData } = useAuthStore();
 
-  // Ref for the popup to detect outside clicks
   const reactionContentRef = useRef(null);
 
-  // Hook to close popup when clicking outside
   useClickOutside(
     reactionContentRef,
     () => {
@@ -33,7 +31,7 @@ const EmojiReactionDisplay = ({ message }) => {
       setIsReactionContentVisible(false);
     }, 300);
   };
-  // Undo/remove reaction handler
+
   const handleUndoReaction = async (e, message) => {
     if (e) {
       e.preventDefault();
@@ -41,11 +39,9 @@ const EmojiReactionDisplay = ({ message }) => {
     }
     await removeReaction(message?._id);
     await getMessages(selectedUser?._id);
-
     closeEmojiContainerWithDelay();
   };
 
-  // Handle reaction emoji click to toggle popup
   const toggleReactionClick = (e, reaction, message) => {
     e.preventDefault();
     e.stopPropagation();
@@ -55,31 +51,37 @@ const EmojiReactionDisplay = ({ message }) => {
       showReactionContent?.messageId === message?._id;
 
     if (isSameReaction) {
-      // Close if clicking same reaction
-      closeEmojiContainerWithDelay()
+      closeEmojiContainerWithDelay();
       return;
     }
 
-    // Show popup for this reaction
     setShowReactionContent({
       reactionId: reaction.userId,
       messageId: message._id,
     });
     setIsReactionContentVisible(true);
 
-    // Calculate and set popup position relative to clicked button
     const buttonRect = e.currentTarget.getBoundingClientRect();
-
-    const popupWidth = 260; // Same as minWidth of popup div
-    const offset = 8; // vertical offset above button
-
+    const popupWidth = 260;
+    const offset = 8;
     const viewportWidth = window.innerWidth;
 
-    // Calculate the ideal left position (center popup on button)
+    const isCurrentUser = message?.senderId === userData?._id;
+
+    // Calculate center
     let left = buttonRect.left + buttonRect.width / 2;
 
-    // Clamp left so popup never goes off-screen horizontally
-    const minPadding = 8; // px from viewport edge
+    const leftSideShift = 80;
+    const rightSideShift = 60;
+
+    if (isCurrentUser) {
+      left -= rightSideShift;
+    } else {
+      left += leftSideShift;
+    }
+
+    // Clamp to prevent overflow
+    const minPadding = 20;
     if (left - popupWidth / 2 < minPadding) {
       left = popupWidth / 2 + minPadding;
     } else if (left + popupWidth / 2 > viewportWidth - minPadding) {
@@ -106,58 +108,62 @@ const EmojiReactionDisplay = ({ message }) => {
             <button
               onClick={(e) => toggleReactionClick(e, reaction, message)}
               title={"View Reaction"}
-              className="p-2 sm:p-2.5size-6 sm:size-7 rounded-full bg-base-200 cursor-pointer hover:bg-base-200/60 transition-all duration-200 flex items-center justify-center -mr-1"
+              className="p-2 sm:p-2.5 size-6 sm:size-7 rounded-full bg-base-200 cursor-pointer hover:bg-base-200/60 transition-all duration-200 flex items-center justify-center -mr-1"
               aria-label={`Reaction: ${reaction.emoji}`}
             >
               <span>{reaction.emoji}</span>
             </button>
 
-            {/* Reaction Popup */}
             {isReactionContentVisible &&
               showReactionContent?.reactionId === reaction.userId &&
               showReactionContent?.messageId === message._id && (
                 <div
                   ref={reactionContentRef}
-                  className="flex items-center gap-1 bg-base-200 p-2 shadow-md shadow-base-content rounded-xl z-40"
-                  // Use fixed positioning to float near the button clicked
+                  className="flex items-center bg-base-200 p-2 shadow-md shadow-base-content rounded-xl z-40 gap-4"
                   style={{
                     position: "fixed",
                     top: popupPosition.top,
                     left: popupPosition.left,
-                    transform: "translate(-50%, -100%)", // center horizontally, above button
-                    minWidth: 260,
-                    display: "flex",
+                    minWidth: reaction.userId === userData._id ? 280 : 260,
+                    transform: "translate(-50%, -100%)",
                     zIndex: 9999,
-                    alignItems: "center",
-                    gap: "1.25rem",
                     animation: "fadeIn 0.3s ease",
                   }}
                 >
-                  {/* Emoji Display */}
-                  <p className="p-1 sm:p-2 rounded-full bg-base-content/20 sm:text-lg">
+                  {/* Emoji */}
+                  <p className="p-2 rounded-full bg-base-content/20 text-lg">
                     {reaction.emoji}
                   </p>
 
-                  {/* User Profile Image */}
-                  <div className="chat-image avatar">
-                    <div className="size-8 sm:size-10 rounded-full border">
+                  {/* Profile image */}
+                  <div className="avatar">
+                    <div className="w-10 h-10 rounded-full border">
                       <img
                         src={userData.profilePic || "/avatar.png"}
                         alt="profile pic"
+                        className="object-cover"
                       />
                     </div>
                   </div>
 
                   {/* User Info & Remove Button */}
-                  <div className="flex flex-col  justify-center text-sm">
-                    <p className="font-medium flex gap-0.5 items-center text-base"><User className="size-4"/>{reaction.fullname}</p>
+                  <div className="flex flex-col justify-center text-sm">
+                    <p className="font-medium flex gap-1 items-center text-base">
+                      <User className="size-4" />
+                      {reaction.fullname}
+                    </p>
                     <button
                       className={`${
                         reaction.userId === userData._id ? "block" : "hidden"
-                      } text-[12px] text-error  hover:text-error/80 hover:bg-error/2 p-[2px] rounded-lg flex gap-0.5 items-center`}
+                      } text-xs text-error hover:text-error/80 hover:bg-error/20 p-[2px] rounded-lg flex gap-1 items-center`}
                       onClick={(e) => handleUndoReaction(e, message)}
                     >
-                      {isRemovingReaction ? <span className="loading size-2 loading-spinner"></span> : <Trash2 className="size-3"/>} Remove Reaction
+                      {isRemovingReaction ? (
+                        <span className="loading size-2 loading-spinner"></span>
+                      ) : (
+                        <Trash2 className="size-3" />
+                      )}
+                      Remove Reaction
                     </button>
                   </div>
                 </div>
