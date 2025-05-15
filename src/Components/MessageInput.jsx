@@ -105,7 +105,7 @@ const MessageInput = () => {
   }, [text]);
 
   return (
-    <div className="p-2 sm:p-4 pb-3 pt-0 w-full">
+    <div className="p-2 sm:p-4 py-0 pb-1 w-full">
       {imagePreview && (
         <div className="mb-3 flex items-center">
           <div className="relative">
@@ -166,7 +166,7 @@ const MessageInput = () => {
           <button
             type="button"
             disabled={isMessageSending}
-            className={`absolute right-2 cursor-pointer top-2 text-primary hover:bg-primary/20 p-0.5 sm:p-1 transition-all duration-200 flex z-10 rounded-full
+            className={`absolute right-1.5 cursor-pointer top-1.5 text-primary hover:bg-primary/20 p-0.5 sm:p-1 transition-all duration-200 flex z-10 rounded-full
                      ${imagePreview ? "text-accent-content" : "text-accent"}
                      ${isMessageSending && "text-"}
                      `}
@@ -181,7 +181,7 @@ const MessageInput = () => {
             ref={emojiToggleRef}
             disabled={isMessageSending}
             onClick={() => setIsEmojiPickerOpen(!isEmojiPickerOpen)}
-            className={`absolute right-8 sm:right-10 top-2 cursor-pointer text-primary hover:bg-primary/20 p-0.5 sm:p-1 z-10 transition-all duration-200  rounded-full ${
+            className={`absolute right-8 sm:right-10 top-1.5 cursor-pointer text-primary hover:bg-primary/20 p-0.5 sm:p-1 z-10 transition-all duration-200  rounded-full ${
               isMessageSending && "text-gray-400"
             }`}
             aria-label="Open emoji picker"

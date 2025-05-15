@@ -86,7 +86,7 @@ const EmojiReactionDisplay = ({ message }) => {
   return (
     <>
       <div
-        className={`relative flex pt-1.5 ${
+        className={`relative flex pt-1 ${
           message?.senderId === userData?._id ? 'justify-end pr-2' : 'justify-start pl-2'
         }`}
       >
@@ -94,7 +94,7 @@ const EmojiReactionDisplay = ({ message }) => {
           <Fragment key={`${reaction.userId}-${message._id}`}>
             <button
               onClick={(e) => toggleReactionClick(e, reaction, message)}
-              className="p-2 sm:p-2.5 size-6 sm:size-7 rounded-full bg-base-200 cursor-pointer hover:bg-base-200/60 transition-all duration-200 flex items-center justify-center -mr-1"
+              className="p-2 sm:p-2.5size-6 sm:size-7 rounded-full bg-base-200 cursor-pointer hover:bg-base-200/60 transition-all duration-200 flex items-center justify-center -mr-1"
               aria-label={`Reaction: ${reaction.emoji}`}
             >
               <span>{reaction.emoji}</span>
