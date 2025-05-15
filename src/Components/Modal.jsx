@@ -24,6 +24,7 @@ const Modal = ({ title, closeModal, isModalOpen, children }) => {
           <h3 className="text-xl font-semibold">{title}</h3>
           <button
             onClick={closeModal}
+            title="Close"
             className="flex items-center justify-center text-error hover:bg-error/10  rounded-full"
           >
             <X className="font-medium size-8 p-1 " />

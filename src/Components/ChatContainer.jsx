@@ -123,7 +123,7 @@ const ChatContainer = () => {
                   <div className="chat-bubble flex flex-col relative group hover:bg-base-300/50 max-w-[150px] sm:max-w-1/2 transition-all duration-100">
                     {/* Message Image */}
                     {message.image && (
-                      <div>
+                      <div title={"View Image"}>
                         <img
                           src={message.image}
                           alt="Attachment"

@@ -88,12 +88,12 @@ const MessageReaction = ({
       {/* Common Emojis */}
       {isCommonEmojisVisible && (
         <div
-          ref={emojiDropdownRef}
           className={`absolute top-1 ${dropdownPositionClass} flex z-10 p-2 bg-base-200 rounded-lg shadow-lg shadow-base-content`}
         >
           {commonEmojis.map((emoji) => (
             <div
               key={emoji}
+              ref={emojiDropdownRef}
               onClick={() => {
                 setIsCommonEmojisVisible(false);
                 handleEmojiSelect(emoji);

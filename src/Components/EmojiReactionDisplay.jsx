@@ -94,6 +94,7 @@ const EmojiReactionDisplay = ({ message }) => {
           <Fragment key={`${reaction.userId}-${message._id}`}>
             <button
               onClick={(e) => toggleReactionClick(e, reaction, message)}
+              title={"View Reaction"}
               className="p-2 sm:p-2.5size-6 sm:size-7 rounded-full bg-base-200 cursor-pointer hover:bg-base-200/60 transition-all duration-200 flex items-center justify-center -mr-1"
               aria-label={`Reaction: ${reaction.emoji}`}
             >
