@@ -10,6 +10,10 @@ export const useChatStore = create((set, get) => ({
   isUserLoading: false,
   isMessageLoading: false,
   isMessageSending: false,
+  isReacting: false,
+  isRemovingReaction: false,
+  isClearingChat: false,
+  isDeleting: false,
 
   getUsers: async () => {
     set({ isUserLoading: true });
@@ -66,6 +70,7 @@ export const useChatStore = create((set, get) => ({
     if (!get().messages || get().messages.length <= 0) {
       toast.error("There Chat is already empty");
     }
+    set({isClearingChat: true})
     try {
       const response = await api.patch(`/message/clear-chat/${id}`);
 
@@ -73,10 +78,13 @@ export const useChatStore = create((set, get) => ({
       set({ messages: [] });
     } catch (error) {
       toast.error(error || "Error Clearing Chat");
+    } finally {
+      set({ isClearingChat: false})
     }
   },
 
   deleteMessageForMe: async (messageId) => {
+    set({ isDeleting: true})
     try {
       const response = await api.patch(`/message/delete-for-me/${messageId}`);
 
@@ -88,11 +96,13 @@ export const useChatStore = create((set, get) => ({
       toast.error(
         error?.response?.data?.message || "Error Deleting the message"
       );
+    } finally {
+      set({ isDeleting: false})
     }
   },
 
   addReaction: async (messageId, emoji) => {
-    console.log("MessageId: ", messageId, "Emoji: ", emoji);
+    set({ isReacting: true})
     try {
       const response = await api.patch(`/message/add-reaction/${messageId}`, {
         emoji,
@@ -106,10 +116,13 @@ export const useChatStore = create((set, get) => ({
       toast.error(
         error?.response?.data?.message || "Error Reacting to the message"
       );
+    } finally {
+      set({ isReacting: false})
     }
   },
 
   removeReaction: async (messageId) => {
+    set({ isRemovingReaction: true})
     try {
       const response = await api.delete(
         `/message/delete-reaction/${messageId}`
@@ -123,6 +136,8 @@ export const useChatStore = create((set, get) => ({
       toast.error(
         error?.response?.data?.message || "Error Reacting to the message"
       );
+    } finally {
+      set({ isRemovingReaction: false})
     }
   },
   subscribeToMessages: () => {

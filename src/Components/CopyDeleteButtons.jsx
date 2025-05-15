@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Copy, Ellipsis, Trash2 } from "lucide-react";
 import useClickOutside from "./Hooks/useClickOutside";
 import toast from "react-hot-toast";
@@ -12,8 +12,10 @@ const CopyDeleteButtons = ({
   emojiReactionClicked,
 }) => {
   const copyDeleteDropdownRef = useRef();
-  const { deleteMessageForMe } = useChatStore();
+  const { deleteMessageForMe, isDeleting } = useChatStore();
   const { userData } = useAuthStore();
+
+  const [isCopying, setIsCopying] = useState(false);
 
   const messageId = message?._id;
   const isSender = message?.senderId === userData?._id;
@@ -32,12 +34,15 @@ const CopyDeleteButtons = ({
 
   const handleCopyMessage = async (text, event) => {
     handleEvent(event);
+    setIsCopying(true);
     try {
       await navigator.clipboard.writeText(text);
       toast.success("Message Copied");
       closeMenuWithDelay();
     } catch (error) {
       toast.error(`Failed to copy text: ${error}`);
+    } finally {
+      setIsCopying(false);
     }
   };
 
@@ -101,7 +106,12 @@ const CopyDeleteButtons = ({
               onClick={(e) => handleCopyMessage(message.text, e)}
               className="flex gap-1 p-1.5 px-2 sm:px-2.5 hover:bg-base-100 rounded-t-lg cursor-pointer"
             >
-              <Copy size={18} /> Copy Text
+              {isCopying ? (
+                <span className="loading loading-spinner"></span>
+              ) : (
+                <Copy size={18} />
+              )}{" "}
+              Copy Text
             </button>
           )}
 
@@ -109,7 +119,12 @@ const CopyDeleteButtons = ({
             onClick={(e) => handleDeleteForMe(e, messageId)}
             className="flex gap-1 p-1.5 px-2 sm:px-2.5 hover:bg-base-100 rounded-b-lg cursor-pointer"
           >
-            <Trash2 size={18} /> Delete For Me
+            {isDeleting ? (
+              <span className="loading loading-spinner"></span>
+            ) : (
+              <Trash2 size={18} />
+            )}{" "}
+            Delete For Me
           </button>
         </div>
       )}

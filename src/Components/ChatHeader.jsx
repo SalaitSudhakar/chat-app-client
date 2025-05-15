@@ -6,7 +6,7 @@ import { useRef, useState } from "react";
 import useClickOutside from './Hooks/useClickOutside';
 
 const ChatHeader = () => {
-  const { selectedUser, setSelectedUser, clearChat } = useChatStore();
+  const { selectedUser, setSelectedUser, clearChat, isClearingChat } = useChatStore();
   const { onlineUsers } = useAuthStore();
 
   const [isMoreContentOpen, setIsMoreContentOpen] = useState(false);
@@ -69,8 +69,8 @@ const ChatHeader = () => {
             >
               <button onClick={handleClearChat} className={btnStyle}>
                 <div className="flex items-center gap-1.5 ">
-                  <Trash2 className="text-base-content/60 size-5" />
-                  <span>Clear Chat</span>
+                  { isClearingChat ? <span className="loading loading-spinner"></span> : <Trash2 className="text-base-content/60 size-5" /> }
+                  <span>Clear Chat</span> 
                 </div>
               </button>
               <button
