@@ -155,7 +155,7 @@ const EmojiReactionDisplay = ({ message }) => {
                     <button
                       className={`${
                         reaction.userId === userData._id ? "block" : "hidden"
-                      } text-xs text-error hover:text-error/80 hover:bg-error/20 p-[2px] rounded-lg flex gap-1 items-center`}
+                      } text-xs text-error hover:text-error/80 hover:bg-error/2 p-[2px] rounded-lg flex gap-1 items-center`}
                       onClick={(e) => handleUndoReaction(e, message)}
                     >
                       {isRemovingReaction ? (
