@@ -41,6 +41,7 @@ const ChatContainer = () => {
   }, [
     selectedUser?._id,
     getMessages,
+    messages,
     subscribeToMessages,
     unsubscribeFromMessages,
   ]);

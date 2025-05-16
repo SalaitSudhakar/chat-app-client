@@ -20,7 +20,7 @@ const MessageReaction = ({
   const isThreeDotActive = CopyDeleteDropdown?.messageId === messageId;
   const isSender = message.senderId === userData._id;
 
-  const commonEmojis = ["👍", "😂", "😮", "👏", "🔥"];
+  const commonEmojis = ["👍", "😂", "🥲", "👏", "🔥", "💖"];
 
   const { addReaction, getMessages, selectedUser } = useChatStore();
 
@@ -53,7 +53,10 @@ const MessageReaction = ({
     await addReaction(messageId, emoji);
     setEmojiReactionClicked(null);
 
-    await getMessages(selectedUser?._id);
+     // Fetch messages after adding reaction
+    if (selectedUser?._id) {
+      await getMessages(selectedUser._id);
+    }
   };
 
   useClickOutside(

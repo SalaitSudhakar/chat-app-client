@@ -111,7 +111,14 @@ export const useChatStore = create((set, get) => ({
       const { message, messageData } = response.data;
 
       toast.success(message || "Reaction added successfully");
-      set({ messages: messageData });
+      // Update the message with new reaction
+      set((state) => ({
+        messages: state.messages.map((msg) =>
+          msg._id === messageId
+            ? { ...msg, emojiReactions: messageData.emojiReactions }
+            : msg
+        ),
+      }));
     } catch (error) {
       toast.error(
         error?.response?.data?.message || "Error Reacting to the message"
@@ -131,7 +138,13 @@ export const useChatStore = create((set, get) => ({
       const { message, messageData } = response.data;
 
       toast.success(message || "Reaction Deleted successfully");
-      set({ messages: messageData });
+      set((state) => ({
+        messages: state.messages.map((msg) =>
+          msg._id === messageId
+            ? { ...msg, emojiReactions: messageData.emojiReactions }
+            : msg
+        ),
+      }));
     } catch (error) {
       toast.error(
         error?.response?.data?.message || "Error Reacting to the message"
@@ -159,18 +172,26 @@ export const useChatStore = create((set, get) => ({
 
     // ✅ Listen for reaction added
     socket.on("reactionAdded", (updatedMessage) => {
-      const updatedMessages = get().messages.map((msg) =>
-        msg._id === updatedMessage._id ? updatedMessage : msg
-      );
-      set({ messages: updatedMessages });
+       console.log("Received reaction update:", updatedMessage);
+      set((state) => ({
+        messages: state.messages.map((msg) =>
+          msg._id === updatedMessage._id
+            ? { ...msg, emojiReactions: updatedMessage.emojiReactions }
+            : msg
+        ),
+      }));
     });
 
     // ✅ Listen for reaction removed
     socket.on("reactionRemoved", (updatedMessage) => {
-      const updatedMessages = get().messages.map((msg) =>
-        msg._id === updatedMessage._id ? updatedMessage : msg
-      );
-      set({ messages: updatedMessages });
+       console.log("Received reaction update:", updatedMessage);
+      set((state) => ({
+        messages: state.messages.map((msg) =>
+          msg._id === updatedMessage._id
+            ? { ...msg, emojiReactions: updatedMessage.emojiReactions }
+            : msg
+        ),
+      }));
     });
   },
 

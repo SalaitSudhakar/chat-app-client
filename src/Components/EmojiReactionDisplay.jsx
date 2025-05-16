@@ -38,7 +38,10 @@ const EmojiReactionDisplay = ({ message }) => {
       e.stopPropagation();
     }
     await removeReaction(message?._id);
-    await getMessages(selectedUser?._id);
+    
+    if (selectedUser?._id) {
+      await getMessages(selectedUser?._id);
+    }
     closeEmojiContainerWithDelay();
   };
 
