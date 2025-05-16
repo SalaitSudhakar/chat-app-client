@@ -70,7 +70,7 @@ export const useChatStore = create((set, get) => ({
     if (!get().messages || get().messages.length <= 0) {
       toast.error("There Chat is already empty");
     }
-    set({isClearingChat: true})
+    set({ isClearingChat: true });
     try {
       const response = await api.patch(`/message/clear-chat/${id}`);
 
@@ -79,12 +79,12 @@ export const useChatStore = create((set, get) => ({
     } catch (error) {
       toast.error(error || "Error Clearing Chat");
     } finally {
-      set({ isClearingChat: false})
+      set({ isClearingChat: false });
     }
   },
 
   deleteMessageForMe: async (messageId) => {
-    set({ isDeleting: true})
+    set({ isDeleting: true });
     try {
       const response = await api.patch(`/message/delete-for-me/${messageId}`);
 
@@ -97,12 +97,12 @@ export const useChatStore = create((set, get) => ({
         error?.response?.data?.message || "Error Deleting the message"
       );
     } finally {
-      set({ isDeleting: false})
+      set({ isDeleting: false });
     }
   },
 
   addReaction: async (messageId, emoji) => {
-    set({ isReacting: true})
+    set({ isReacting: true });
     try {
       const response = await api.patch(`/message/add-reaction/${messageId}`, {
         emoji,
@@ -117,12 +117,12 @@ export const useChatStore = create((set, get) => ({
         error?.response?.data?.message || "Error Reacting to the message"
       );
     } finally {
-      set({ isReacting: false})
+      set({ isReacting: false });
     }
   },
 
   removeReaction: async (messageId) => {
-    set({ isRemovingReaction: true})
+    set({ isRemovingReaction: true });
     try {
       const response = await api.delete(
         `/message/delete-reaction/${messageId}`
@@ -137,12 +137,12 @@ export const useChatStore = create((set, get) => ({
         error?.response?.data?.message || "Error Reacting to the message"
       );
     } finally {
-      set({ isRemovingReaction: false})
+      set({ isRemovingReaction: false });
     }
   },
+
   subscribeToMessages: () => {
     const { selectedUser } = get();
-
     if (!selectedUser) return;
 
     const socket = useAuthStore.getState()?.socket;
@@ -156,10 +156,28 @@ export const useChatStore = create((set, get) => ({
         messages: [...get().messages, newMessage],
       });
     });
+
+    // ✅ Listen for reaction added
+    socket.on("reactionAdded", (updatedMessage) => {
+      const updatedMessages = get().messages.map((msg) =>
+        msg._id === updatedMessage._id ? updatedMessage : msg
+      );
+      set({ messages: updatedMessages });
+    });
+
+    // ✅ Listen for reaction removed
+    socket.on("reactionRemoved", (updatedMessage) => {
+      const updatedMessages = get().messages.map((msg) =>
+        msg._id === updatedMessage._id ? updatedMessage : msg
+      );
+      set({ messages: updatedMessages });
+    });
   },
 
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState()?.socket;
     socket.off("newMessage");
+    socket.off("reactionAdded");
+    socket.off("reactionRemoved");
   },
 }));
