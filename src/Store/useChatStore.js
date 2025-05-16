@@ -172,7 +172,6 @@ export const useChatStore = create((set, get) => ({
 
     // ✅ Listen for reaction added
     socket.on("reactionAdded", (updatedMessage) => {
-       console.log("Received reaction update:", updatedMessage);
       set((state) => ({
         messages: state.messages.map((msg) =>
           msg._id === updatedMessage._id
@@ -184,7 +183,6 @@ export const useChatStore = create((set, get) => ({
 
     // ✅ Listen for reaction removed
     socket.on("reactionRemoved", (updatedMessage) => {
-       console.log("Received reaction update:", updatedMessage);
       set((state) => ({
         messages: state.messages.map((msg) =>
           msg._id === updatedMessage._id
