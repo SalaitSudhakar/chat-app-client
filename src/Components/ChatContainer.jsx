@@ -29,6 +29,7 @@ const ChatContainer = () => {
   const { userData } = useAuthStore();
 
   const messageEndRef = useRef(null);
+  const containerRef = useRef(null);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(false);
@@ -48,7 +49,12 @@ const ChatContainer = () => {
 
   // Smooth scroll animation
   useEffect(() => {
-    if (messageEndRef.current && messages) {
+    const container = containerRef.current;
+    const nearBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight <
+      200;
+
+    if (messageEndRef.current && nearBottom) {
       messageEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
@@ -80,7 +86,10 @@ const ChatContainer = () => {
 
       {/* Chat Messages */}
       {messages.length > 0 ? (
-        <div className="flex-1 flex-col flex-grow min-h-[50vh] overflow-y-auto p-1 sm:p-4 pb-0 relative">
+        <div
+          ref={containerRef}
+          className="flex-1 flex-col flex-grow min-h-[50vh] overflow-y-auto p-1 sm:p-4 pb-0 relative"
+        >
           {Object.entries(groupedMessages).map(([date, msgs]) => (
             <div key={date}>
               {/* Date Header */}
@@ -97,7 +106,6 @@ const ChatContainer = () => {
                       ? "chat-end"
                       : "chat-start"
                   }`}
-                  ref={messageEndRef}
                 >
                   {/* Profile image */}
                   <div className="chat-image avatar">
@@ -169,6 +177,9 @@ const ChatContainer = () => {
               ))}
             </div>
           ))}
+
+          {/* Add this dummy div at the end */}
+          <div ref={messageEndRef} />
         </div>
       ) : (
         <div className="h-screen flex items-center justify-center text-base-content/70 text-xl capitalize">
