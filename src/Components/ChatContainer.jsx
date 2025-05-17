@@ -47,17 +47,13 @@ const ChatContainer = () => {
     unsubscribeFromMessages,
   ]);
 
-  // Smooth scroll animation
+  // Auto scroll to bottom on new message
   useEffect(() => {
-    const container = containerRef.current;
-    const nearBottom =
-      container.scrollHeight - container.scrollTop - container.clientHeight <
-      200;
-
-    if (messageEndRef.current && nearBottom) {
-      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [messages]);
+    const timeout = setTimeout(() => {
+      messageEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    }, 100);
+    return () => clearTimeout(timeout);
+  }, [messages.length]);
 
   let groupedMessages = {};
   if (Array.isArray(messages)) {
@@ -90,7 +86,8 @@ const ChatContainer = () => {
           ref={containerRef}
           className="flex-1 flex-col flex-grow min-h-[50vh] overflow-y-auto p-1 sm:p-4 pb-0 relative"
         >
-          {Object.entries(groupedMessages).map(([date, msgs]) => (
+<div className="flex flex-col">
+            {Object.entries(groupedMessages).map(([date, msgs]) => (
             <div key={date}>
               {/* Date Header */}
               <div className="text-center my-4 text-gray-500 font-medium">
@@ -177,6 +174,7 @@ const ChatContainer = () => {
               ))}
             </div>
           ))}
+</div>
 
           {/* Add this dummy div at the end */}
           <div ref={messageEndRef} />
