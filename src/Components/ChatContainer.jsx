@@ -1,5 +1,5 @@
 import { useChatStore } from "../Store/useChatStore";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, Fragment } from "react";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
@@ -27,17 +27,22 @@ const ChatContainer = () => {
   const [copyDeleteButtonClicked, setCopyDeleteButtonClicked] = useState(null);
 
   const { userData } = useAuthStore();
+
   const messageEndRef = useRef(null);
+  const containerRef = useRef(null);
+
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(false);
 
   useEffect(() => {
     getMessages(selectedUser?._id);
     subscribeToMessages();
+
     return () => unsubscribeFromMessages();
   }, [
     selectedUser?._id,
     getMessages,
+    messages,
     subscribeToMessages,
     unsubscribeFromMessages,
   ]);
@@ -45,10 +50,7 @@ const ChatContainer = () => {
   // Auto scroll to bottom on new message
   useEffect(() => {
     const timeout = setTimeout(() => {
-      messageEndRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "end",
-      });
+      messageEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
     }, 100);
     return () => clearTimeout(timeout);
   }, [messages.length]);
@@ -75,15 +77,24 @@ const ChatContainer = () => {
 
   return (
     <div className="flex-1 flex flex-col overflow-auto">
+      {/* Chat Header */}
       <ChatHeader />
-      <div className="flex-1 flex-col flex-grow min-h-[50vh] overflow-y-auto p-1 sm:p-4 pb-0 relative">
-        <div className="flex flex-col">
-          {Object.entries(groupedMessages).map(([date, msgs]) => (
+
+      {/* Chat Messages */}
+      {messages.length > 0 ? (
+        <div
+          ref={containerRef}
+          className="flex-1 flex-col flex-grow min-h-[50vh] overflow-y-auto p-1 sm:p-4 pb-0 relative"
+        >
+<div className="flex flex-col">
+            {Object.entries(groupedMessages).map(([date, msgs]) => (
             <div key={date}>
+              {/* Date Header */}
               <div className="text-center my-4 text-gray-500 font-medium">
                 {date}
               </div>
 
+              {/* Messages */}
               {msgs.map((message) => (
                 <div
                   key={message._id}
@@ -93,6 +104,7 @@ const ChatContainer = () => {
                       : "chat-start"
                   }`}
                 >
+                  {/* Profile image */}
                   <div className="chat-image avatar">
                     <div className="size-8 sm:size-10 rounded-full border">
                       <img
@@ -106,13 +118,16 @@ const ChatContainer = () => {
                     </div>
                   </div>
 
+                  {/* Message sent time */}
                   <div className="chat-header mb-1">
                     <time className="text-xs opacity-50 ml-1">
                       {formatMessageTime(message.createdAt)}
                     </time>
                   </div>
 
+                  {/* Message Content */}
                   <div className="chat-bubble flex flex-col relative group hover:bg-base-300/50 max-w-[150px] sm:max-w-1/2 transition-all duration-100">
+                    {/* Message Image */}
                     {message.image && (
                       <div title={"View Image"}>
                         <img
@@ -124,6 +139,7 @@ const ChatContainer = () => {
                       </div>
                     )}
 
+                    {/* Message Text */}
                     {message.text && (
                       <div
                         className={`${
@@ -136,6 +152,7 @@ const ChatContainer = () => {
                       </div>
                     )}
 
+                    {/* Copy-delete Buttons */}
                     <CopyDeleteButtons
                       message={message}
                       copyDeleteButtonClicked={copyDeleteButtonClicked}
@@ -143,6 +160,7 @@ const ChatContainer = () => {
                       emojiReactionClicked={emojiReactionClicked}
                     />
 
+                    {/* Emoji Reaction */}
                     <MessageReaction
                       message={message}
                       emojiReactionClicked={emojiReactionClicked}
@@ -156,17 +174,21 @@ const ChatContainer = () => {
               ))}
             </div>
           ))}
-        </div>
+</div>
 
-        {/* Dummy div for scroll-to-bottom */}
-        <div ref={messageEndRef} />
-      </div>
+          {/* Add this dummy div at the end */}
+          <div ref={messageEndRef} />
+        </div>
       ) : (
-      <div className="h-screen flex items-center justify-center text-base-content/70 text-xl capitalize">
-        start the conversation...
-      </div>
+        <div className="h-screen flex items-center justify-center text-base-content/70 text-xl capitalize">
+          start the conversation...
+        </div>
       )}
+
+      {/* Message Input */}
       <MessageInput />
+
+      {/* Image Preview Modal */}
       <Modal
         title="Image Preview"
         closeModal={() => {
