@@ -1,5 +1,5 @@
 import { useChatStore } from "../Store/useChatStore";
-import { useEffect, useRef, useState, Fragment } from "react";
+import { useEffect, useRef, useState } from "react";
 import ChatHeader from "./ChatHeader";
 import MessageInput from "./MessageInput";
 import MessageSkeleton from "./skeletons/MessageSkeleton";
@@ -27,22 +27,17 @@ const ChatContainer = () => {
   const [copyDeleteButtonClicked, setCopyDeleteButtonClicked] = useState(null);
 
   const { userData } = useAuthStore();
-
   const messageEndRef = useRef(null);
-  const containerRef = useRef(null);
-
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(false);
 
   useEffect(() => {
     getMessages(selectedUser?._id);
     subscribeToMessages();
-
     return () => unsubscribeFromMessages();
   }, [
     selectedUser?._id,
     getMessages,
-    messages,
     subscribeToMessages,
     unsubscribeFromMessages,
   ]);
@@ -77,11 +72,10 @@ const ChatContainer = () => {
 
   return (
     <div className="flex-1 flex flex-col overflow-auto">
-      {/* Chat Header */}
       <ChatHeader />
 
-      {/* Chat Messages */}
       {messages.length > 0 ? (
+<<<<<<< HEAD
         <div
           ref={containerRef}
           className="flex-1 flex-col flex-grow min-h-[50vh] overflow-y-auto p-1 sm:p-4 pb-0 relative"
@@ -93,82 +87,88 @@ const ChatContainer = () => {
               <div className="text-center my-4 text-gray-500 font-medium">
                 {date}
               </div>
+=======
+        <div className="flex-1 flex flex-col overflow-y-auto p-1 sm:p-4 pb-0 relative">
+          <div className="flex flex-col">
+            {Object.entries(groupedMessages).map(([date, msgs]) => (
+              <div key={date}>
+                <div className="text-center my-4 text-gray-500 font-medium">
+                  {date}
+                </div>
+>>>>>>> 6b6f12b3ae967b6208db406d058628c8978f2b73
 
-              {/* Messages */}
-              {msgs.map((message) => (
-                <div
-                  key={message._id}
-                  className={`chat ${
-                    message.senderId === userData._id
-                      ? "chat-end"
-                      : "chat-start"
-                  }`}
-                >
-                  {/* Profile image */}
-                  <div className="chat-image avatar">
-                    <div className="size-8 sm:size-10 rounded-full border">
-                      <img
-                        src={
-                          message.senderId === userData._id
-                            ? userData.profilePic || avatarImage
-                            : selectedUser.profilePic || avatarImage
-                        }
-                        alt="profile pic"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Message sent time */}
-                  <div className="chat-header mb-1">
-                    <time className="text-xs opacity-50 ml-1">
-                      {formatMessageTime(message.createdAt)}
-                    </time>
-                  </div>
-
-                  {/* Message Content */}
-                  <div className="chat-bubble flex flex-col relative group hover:bg-base-300/50 max-w-[150px] sm:max-w-1/2 transition-all duration-100">
-                    {/* Message Image */}
-                    {message.image && (
-                      <div title={"View Image"}>
+                {msgs.map((message) => (
+                  <div
+                    key={message._id}
+                    className={`chat ${
+                      message.senderId === userData._id ? "chat-end" : "chat-start"
+                    }`}
+                  >
+                    <div className="chat-image avatar">
+                      <div className="size-8 sm:size-10 rounded-full border">
                         <img
-                          src={message.image}
-                          alt="Attachment"
-                          onClick={() => handlePreviewImage(message.image)}
-                          className="max-w-[100px] sm:max-w-[150px] rounded-md mb-2 cursor-pointer"
+                          src={
+                            message.senderId === userData._id
+                              ? userData.profilePic || avatarImage
+                              : selectedUser.profilePic || avatarImage
+                          }
+                          alt="profile pic"
                         />
                       </div>
-                    )}
+                    </div>
 
-                    {/* Message Text */}
-                    {message.text && (
-                      <div
-                        className={`${
-                          message.image
-                            ? "absolute -bottom-1 left-0 bg-base-300/90 w-full p-1 text-center group-hover:bg-base-300/80 group-hover:text-white"
-                            : ""
-                        }`}
-                      >
-                        <p>{message.text}</p>
-                      </div>
-                    )}
+                    <div className="chat-header mb-1">
+                      <time className="text-xs opacity-50 ml-1">
+                        {formatMessageTime(message.createdAt)}
+                      </time>
+                    </div>
 
-                    {/* Copy-delete Buttons */}
-                    <CopyDeleteButtons
-                      message={message}
-                      copyDeleteButtonClicked={copyDeleteButtonClicked}
-                      setCopyDeleteButtonClicked={setCopyDeleteButtonClicked}
-                      emojiReactionClicked={emojiReactionClicked}
-                    />
+                    <div className="chat-bubble flex flex-col relative group hover:bg-base-300/50 max-w-[150px] sm:max-w-1/2 transition-all duration-100">
+                      {message.image && (
+                        <div title={"View Image"}>
+                          <img
+                            src={message.image}
+                            alt="Attachment"
+                            onClick={() => handlePreviewImage(message.image)}
+                            className="max-w-[100px] sm:max-w-[150px] rounded-md mb-2 cursor-pointer"
+                          />
+                        </div>
+                      )}
 
-                    {/* Emoji Reaction */}
-                    <MessageReaction
-                      message={message}
-                      emojiReactionClicked={emojiReactionClicked}
-                      setEmojiReactionClicked={setEmojiReactionClicked}
-                      CopyDeleteDropdown={copyDeleteButtonClicked}
-                    />
+                      {message.text && (
+                        <div
+                          className={`${
+                            message.image
+                              ? "absolute -bottom-1 left-0 bg-base-300/90 w-full p-1 text-center group-hover:bg-base-300/80 group-hover:text-white"
+                              : ""
+                          }`}
+                        >
+                          <p>{message.text}</p>
+                        </div>
+                      )}
+
+                      <CopyDeleteButtons
+                        message={message}
+                        copyDeleteButtonClicked={copyDeleteButtonClicked}
+                        setCopyDeleteButtonClicked={setCopyDeleteButtonClicked}
+                        emojiReactionClicked={emojiReactionClicked}
+                      />
+
+                      <MessageReaction
+                        message={message}
+                        emojiReactionClicked={emojiReactionClicked}
+                        setEmojiReactionClicked={setEmojiReactionClicked}
+                        CopyDeleteDropdown={copyDeleteButtonClicked}
+                      />
+                    </div>
+
+                    <EmojiReactionDisplay message={message} />
                   </div>
+                ))}
+              </div>
+            ))}
 
+<<<<<<< HEAD
                   <EmojiReactionDisplay message={message} />
                 </div>
               ))}
@@ -178,6 +178,11 @@ const ChatContainer = () => {
 
           {/* Add this dummy div at the end */}
           <div ref={messageEndRef} />
+=======
+            {/* 🔽 Scroll target at the very end of message list */}
+            <div ref={messageEndRef} />
+          </div>
+>>>>>>> 6b6f12b3ae967b6208db406d058628c8978f2b73
         </div>
       ) : (
         <div className="h-screen flex items-center justify-center text-base-content/70 text-xl capitalize">
@@ -185,10 +190,8 @@ const ChatContainer = () => {
         </div>
       )}
 
-      {/* Message Input */}
       <MessageInput />
 
-      {/* Image Preview Modal */}
       <Modal
         title="Image Preview"
         closeModal={() => {
