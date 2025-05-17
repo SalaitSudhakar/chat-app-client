@@ -1,4 +1,4 @@
-import React, { useState, useRef, Fragment } from "react";
+import React, { useState, useRef, Fragment, useEffect } from "react";
 import { useChatStore } from "../Store/useChatStore";
 import useClickOutside from "./Hooks/useClickOutside";
 import { useAuthStore } from "../Store/useAuthStore";
@@ -6,12 +6,10 @@ import { Trash2, User } from "lucide-react";
 
 const EmojiReactionDisplay = ({ message }) => {
   const [showReactionContent, setShowReactionContent] = useState(null);
-  const [isReactionContentVisible, setIsReactionContentVisible] =
-    useState(false);
+  const [isReactionContentVisible, setIsReactionContentVisible] = useState(false);
   const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
 
-  const { removeReaction, getMessages, selectedUser, isRemovingReaction } =
-    useChatStore();
+  const { removeReaction, getMessages, selectedUser, isRemovingReaction } = useChatStore();
   const { userData } = useAuthStore();
 
   const reactionContentRef = useRef(null);
@@ -24,6 +22,29 @@ const EmojiReactionDisplay = ({ message }) => {
     },
     isReactionContentVisible
   );
+
+  // Close popup when selectedUser changes (e.g., switched chat)
+  useEffect(() => {
+    setIsReactionContentVisible(false);
+    setShowReactionContent(null);
+  }, [selectedUser]);
+
+  // Optional: Close popup when message changes (new messages)
+  useEffect(() => {
+    setIsReactionContentVisible(false);
+    setShowReactionContent(null);
+  }, [message._id, message.emojiReactions]);
+
+  // Optional: Recalculate or close popup on window resize to avoid positioning issues
+  useEffect(() => {
+    function handleResize() {
+      setIsReactionContentVisible(false);
+      setShowReactionContent(null);
+    }
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const closeEmojiContainerWithDelay = () => {
     setTimeout(() => {
@@ -38,7 +59,6 @@ const EmojiReactionDisplay = ({ message }) => {
       e.stopPropagation();
     }
     await removeReaction(message?._id);
-    
     if (selectedUser?._id) {
       await getMessages(selectedUser?._id);
     }
@@ -71,7 +91,6 @@ const EmojiReactionDisplay = ({ message }) => {
 
     const isCurrentUser = message?.senderId === userData?._id;
 
-    // Calculate center
     let left = buttonRect.left + buttonRect.width / 2;
 
     const leftSideShift = 80;
@@ -83,7 +102,6 @@ const EmojiReactionDisplay = ({ message }) => {
       left += leftSideShift;
     }
 
-    // Clamp to prevent overflow
     const minPadding = 20;
     if (left - popupWidth / 2 < minPadding) {
       left = popupWidth / 2 + minPadding;

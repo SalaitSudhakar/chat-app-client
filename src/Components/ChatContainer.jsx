@@ -34,18 +34,14 @@ const ChatContainer = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(false);
 
-  useEffect(() => {
-    getMessages(selectedUser?._id);
-    subscribeToMessages();
 
-    return () => unsubscribeFromMessages();
-  }, [
-    selectedUser?._id,
-    getMessages,
-    messages,
-    subscribeToMessages,
-    unsubscribeFromMessages,
-  ]);
+useEffect(() => {
+  getMessages(selectedUser?._id);
+  subscribeToMessages();
+
+  return () => unsubscribeFromMessages();
+}, [selectedUser?._id]);
+
 
   // Auto scroll to bottom on new message
   useEffect(() => {
