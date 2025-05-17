@@ -102,7 +102,8 @@ export const useChatStore = create((set, get) => ({
   },
 
   addReaction: async (messageId, emoji) => {
-    set({ isReacting: true });
+    set({ isReacting: true }); 
+
     try {
       const response = await api.patch(`/message/add-reaction/${messageId}`, {
         emoji,
@@ -130,14 +131,32 @@ export const useChatStore = create((set, get) => ({
 
   removeReaction: async (messageId) => {
     set({ isRemovingReaction: true });
+
+    const userId = useAuthStore?.getState().userData?._id;
+
+    // ✅ Optimistically remove the user's reaction
+    set((state) => ({
+      messages: state.messages.map((msg) =>
+        msg._id === messageId
+          ? {
+              ...msg,
+              emojiReactions:
+                msg.emojiReactions?.filter(
+                  (reaction) => reaction.user !== userId
+                ) || [],
+            }
+          : msg
+      ),
+    }));
+
     try {
       const response = await api.delete(
         `/message/delete-reaction/${messageId}`
       );
-
       const { message, messageData } = response.data;
 
-      toast.success(message || "Reaction Deleted successfully");
+      toast.success(message || "Reaction removed successfully");
+
       set((state) => ({
         messages: state.messages.map((msg) =>
           msg._id === messageId
@@ -146,9 +165,7 @@ export const useChatStore = create((set, get) => ({
         ),
       }));
     } catch (error) {
-      toast.error(
-        error?.response?.data?.message || "Error Reacting to the message"
-      );
+      toast.error(error?.response?.data?.message || "Error removing reaction");
     } finally {
       set({ isRemovingReaction: false });
     }

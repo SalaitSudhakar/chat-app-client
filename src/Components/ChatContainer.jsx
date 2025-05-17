@@ -29,7 +29,6 @@ const ChatContainer = () => {
   const { userData } = useAuthStore();
 
   const messageEndRef = useRef(null);
-  const containerRef = useRef(null);
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewImage, setPreviewImage] = useState(false);
@@ -49,14 +48,7 @@ const ChatContainer = () => {
 
   // Smooth scroll animation
   useEffect(() => {
-    const container = containerRef.current;
-    const nearBottom =
-      container.scrollHeight - container.scrollTop - container.clientHeight <
-      200;
-
-    if (messageEndRef.current && nearBottom) {
-      messageEndRef.current.scrollIntoView({ behavior: "smooth" });
-    }
+    messageEndRef.current?.scrollIntoView({ behaviour: "smooth" });
   }, [messages]);
 
   let groupedMessages = {};
@@ -86,10 +78,7 @@ const ChatContainer = () => {
 
       {/* Chat Messages */}
       {messages.length > 0 ? (
-        <div
-          ref={containerRef}
-          className="flex-1 flex-col flex-grow min-h-[50vh] overflow-y-auto p-1 sm:p-4 pb-0 relative"
-        >
+        <div className="flex-1 flex-col flex-grow min-h-[50vh] overflow-y-auto p-1 sm:p-4 pb-0 relative">
           {Object.entries(groupedMessages).map(([date, msgs]) => (
             <div key={date}>
               {/* Date Header */}
